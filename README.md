@@ -15,7 +15,8 @@ Synthwave demonstrates the removal of CO2 from seawater using
 using a 3D printed shell and common, off-the-shelf components. With a materials list under $300, Synthwave is designed
 to be an entry point for anyone looking to learn more about ocean-based carbon capture.
 
-It is designed to be fully hackable, with an emphasis on making experiments easy to validate.
+It is designed to be fully hackable, with an emphasis on approachability. Our goal is to bring ocean-based
+electrochemical capture to a wider audience!
 
 ## Hardware
 
@@ -48,6 +49,10 @@ As this is an electrochemistry project, it requires electrodes. While the exact 
 development, I would be happy to send you a working set of electrodes for free. Please get in touch with me directly in
 order to arrange this.
 
+Should you choose to develop your own electrodes, please consult
+[this thread in the OpenAir forums](https://www.openairforum.org/t/synthwave-electrochemical-co2-capture-from-seawater/781/4)
+for more information.
+
 ## Software
 
 The software that controls this system is designed to be as readable as possible. It uses Arduino-compatible code to
@@ -73,15 +78,15 @@ Above all else, Synthwave aims to put our assumptions to the test, and help info
 
 ## Future research
 
-As noted, Synthwave is designed to be a simple demonstration of a specific carbon capture technique. In order to achieve
+Synthwave is designed to be a simple demonstration of a specific carbon capture technique. In order to achieve
 commercial viability, virtually all aspects of this technique will need to be improved.
 
-The foremost need is to improve the quality of our electrodes. This will likely involve more sophisticated coating
-techniques to avoid degredation and fouling, as well as better measurements, CV charts, etc.
+The main need is to improve the quality of our electrodes. This will likely involve better coating techniques to avoid
+degredation and fouling, as well as more accurate measurements, CV charts, etc.
 
-With improved electrodes, the next step would be to improve the overall throughput of the device to handle much more
-seawater. This could be achieved by increasing the size of the system, designing a more efficient cell (ideally a flow
-cell), or perhaps building multiple machines to work in parallel with one another.
+With improved electrodes, the next step would be to improve the throughput of the device to handle much more seawater.
+This could be achieved by increasing the size of the system, designing a more efficient cell (ideally a flow cell), or
+perhaps building multiple machines to work in parallel with one another.
 
 We hope that by publishing this work under the MIT license, future hackers and collaborators will share their learnings.
 It is only by the overwhelming success of carbon capture do we hope to maintain a livable climate. By investing your
