@@ -1,3 +1,5 @@
+#define WIFI_Kit_32_V3 true
+
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <FS.h>

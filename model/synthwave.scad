@@ -38,7 +38,8 @@ $fn = 50;
 // breadboard_cover();
 // pump_bracket();
 // container_cover();
-strain_relief();
+// strain_relief();
+base_solenoid_fitting();
 
 module base() {
     border_width = 10;
@@ -375,6 +376,15 @@ module solenoid_funnel() {
     translate([0, 0, 20]) rotate([90, 0, 90]) cylinder(100, r=5);
     
     // english_thread(diameter=1.05, threads_per_inch=14, length=3/4, taper=1/16);
+}
+
+module base_solenoid_fitting() {
+    h = 8;
+    difference() {
+        translate([0, 0, h]) rotate([180, 0]) ScrewThread(26.670, h, pitch=1.814, tolerance=2);
+        cylinder(100, r=5);
+        
+    }
 }
 
 module standoffs(h, w, d, r) {
