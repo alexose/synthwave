@@ -17,7 +17,7 @@ container_bottom_radius = 89 / 2;
 container_top_radius = 112 / 2;
 container_height = 135.3;
 
-pump_mount_depth = 10;
+pump_mount_depth = 8;
 pump_mount_height = container_height + 20;
 
 rear_wall_height = 250;
@@ -31,7 +31,7 @@ electrode_holder_radius = 1;
 
 distance_between_containers = 14;
 
-$fn = 50;
+$fn = 80;
 
 // base();
 // electrode_holder();
@@ -39,7 +39,21 @@ $fn = 50;
 // pump_bracket();
 // container_cover();
 // strain_relief();
-base_solenoid_fitting();
+// test_fit();
+three_way_valve_mount();
+
+module test_fit() {
+    f = 0.2;
+    
+    difference() {
+        translate([0, 0, 5]) cube([50, 30, 10], center=true);
+        ScrewThread(21.336 + f, 15, pitch=2.209);
+        translate([20, 0]) cylinder(15, r=1);
+        translate([15, 0]) cylinder(15, r=1.3);
+        translate([-15, 0]) cylinder(15, r=1.6);
+        translate([-20, 0]) cylinder(15, r=2);
+    }
+}
 
 module base() {
     border_width = 10;
@@ -51,7 +65,7 @@ module base() {
         
     dist = dr + distance_between_containers;
     
-    pw = 105;
+    pw = 108;
     rw = 56;
     
     y = -3; // nudge forward
@@ -60,16 +74,15 @@ module base() {
     // translate([-dist, 0]) container();
     
     difference() {
-        a = 25;
         union() {
             lid();
             translate([dist, y]) cylinder(35, r=dr+2);
             translate([-dist, y]) cylinder(35, r=dr+2);
-            rotate([0, 0, -a]) translate([pw, y]) mirror([0, 1, 0]) rotate([0, 0, 180 + a]) pump_mount();
-            rotate([0, 0, a]) translate([-pw, y]) rotate([0, 0, a]) pump_mount();
+            translate([pw, y]) mirror([0, 1, 0]) rotate([0, 0, 180]) pump_mount();
+            translate([-pw, y]) pump_mount();
             translate([0, rw]) rear_wall();
-            translate([pw + 4, 54.5, 120]) band(35);
-            translate([-pw - 4, 54.5, 120]) mirror([1,0,0]) band(35);
+            translate([pw + 4, 54.5, 110]) band(35);
+            translate([-pw - 4, 54.5, 110]) mirror([1,0,0]) band(35);
 
         }
         translate([dist, y]) solenoid_funnel();
@@ -136,7 +149,7 @@ module top_shelf() {
     r = 2;
     
     r2 = 5;
-    r3 = 1.2;
+    r3 = 1.6    ;
     d2 = 58; // see shelf_brackets below
     d3 = 14 / 2;
     o = 3;
@@ -223,8 +236,8 @@ module shelf_brackets(holes=false) {
     module shelf_bracket_with_holes() {
         difference() {
             shelf_bracket(w);
-            translate([0, -8]) cylinder(100, r=0.8);
-            translate([0, -22]) cylinder(100, r=0.8);
+            translate([0, -8]) cylinder(100, r=1.6);
+            translate([0, -22]) cylinder(100, r=1.6);
         }
     }
 }
@@ -266,7 +279,7 @@ module pump_bracket() {
     }
 }
 
-module pump_bracket_screw_holes(r=1.2) {
+module pump_bracket_screw_holes(r=1.6) {
     h = 20;
     o = 4;
     y = 22;
@@ -295,7 +308,7 @@ module band(h=10, c=1) {
                 }
             }
         }
-        translate([-30, -30, 45]) rotate([90, -35, 135]) solenoid_screw_holes(1);
+        translate([-30, -30, 48]) rotate([90, -35, 155]) solenoid_screw_holes(1.6);
     }
     
 }
@@ -370,21 +383,12 @@ module solenoid_funnel() {
     translate([0, 0, h]) cylinder(h, r1, r2 - 2);
     translate([0, 0, h*2-4]) container();
     
-    translate([0, 0, h]) rotate([180, 0]) ScrewThread(26.670, h, pitch=1.814);
+    translate([0, 0, h]) rotate([180, 0]) ScrewThread(21.336, h, pitch=2.209);
     
     // Hole for drain line
     translate([0, 0, 20]) rotate([90, 0, 90]) cylinder(100, r=5);
     
     // english_thread(diameter=1.05, threads_per_inch=14, length=3/4, taper=1/16);
-}
-
-module base_solenoid_fitting() {
-    h = 8;
-    difference() {
-        translate([0, 0, h]) rotate([180, 0]) ScrewThread(26.670, h, pitch=1.814, tolerance=2);
-        cylinder(100, r=5);
-        
-    }
 }
 
 module standoffs(h, w, d, r) {
@@ -431,7 +435,7 @@ module screw_bracket() {
     scale(15) translate([w/2, 0, w]) rotate([0, 90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
 }
 
-module breadboard_cover_screw_holes(r=1.2) {
+module breadboard_cover_screw_holes(r=1.6) {
     f = 3; // fit tolerance
     t = 1.6; // wall thickness
     h = 20;
@@ -441,7 +445,7 @@ module breadboard_cover_screw_holes(r=1.2) {
     standoffs(h, x/2 + r, y + 8 + r, r);
 }
 
-module solenoid_screw_holes(r=0.8) {
+module solenoid_screw_holes(r=1.6) {
     d = 38;
     
     translate([d/2, 0]) cylinder(50, r=r);
@@ -453,8 +457,21 @@ module strain_relief() {
     
     difference() {
         linear_extrude(h) scale([0.8, 1, 1]) polygon([[-32,0],[-32,7],[32,7],[32,0],[40,0],[40,-2],[30,-2],[30,5],[-30,5],[-30,-2],[-40,-2],[-40,0]]);
-         translate([0, 10, 99]) rotate([90, 0]) breadboard_cover_screw_holes(r=1.4);
+         translate([0, 10, 99]) rotate([90, 0]) breadboard_cover_screw_holes(r=1.6);
       }
+}
 
-
+module three_way_valve_mount(r=1) {
+    w = 20;
+    h = 1;
+    d = 5;
+    radius = 3;
+    distance_apart = 25;
+    
+    difference() {
+        hull() standoffs(h, w, d, radius);
+        translate([distance_apart / 2, 0]) cylinder(h, r=r);
+        translate([-distance_apart / 2, 0]) cylinder(h, r=r);
+    }
+    
 }
