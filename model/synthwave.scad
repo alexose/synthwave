@@ -22,7 +22,7 @@ distance_between_containers = 14;
 
 default_screw_radius = 1;
 
-$fn = 40;
+$fn = 20;
 
 render_base = 1;
 render_electrode_holder = 0;
@@ -92,9 +92,8 @@ module base() {
             hull() standoffs(h, w, o, r);
             translate([0, -1, 130]) rotate([-90, 0]) breadboard_cover_screw_holes();
             translate([0, -1, 130]) rotate([-90, 0]) pcb_screw_holes();
+            rear_wall_cutouts();
         }
-        
-        // translate([pw, -2.5, 200]) band(100, -1);
         
         // Lower shelf
         translate([0, 0, 180]) difference() {
@@ -105,8 +104,20 @@ module base() {
         
         // Upper shelf
         translate([0, 0, 220]) shelf_brackets(true);
+        
+        module rear_wall_cutouts() {
+            r = 120;
+            c = 35;
+            h = 30;
+            b = 80;
+            $fn = 100;
+            
+            translate([r + c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
+            translate([-r - c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
+        }
     }
 }
+
 
 module lid() {
     br = base_radius; 
