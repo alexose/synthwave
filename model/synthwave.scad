@@ -1,5 +1,9 @@
 use <threads.scad>
 
+
+// TODO: Improve degasser mount
+// TODO: Design vac pump shelf
+
 base_radius = 283 / 2; // inner diameter of 5 gallon bucket in mm
 
 container_bottom_radius = 89 / 2;
@@ -73,8 +77,8 @@ module base() {
         }
         
         a = 45;
-        translate([dist, y, -5]) rotate([180, 180, -90 - a]) solenoid_funnel();
-        translate([-dist, y, -5]) rotate([180, 180, -90 + a - 30]) solenoid_funnel();
+        translate([dist, y, -5]) mirror([1, 0]) rotate([180, 180])  solenoid_funnel();
+        translate([-dist, y, -5]) rotate([180, 180]) solenoid_funnel();
         translate([0, rw-1, 90]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center");
         
     }
@@ -130,13 +134,23 @@ module lid() {
         union() {
             difference() {
                 cylinder(h, r=br);
-                translate([84, 36, -20]) cylinder(100, r=5);
-                translate([-84, 36, -20]) cylinder(100, r=5);
+                translate([115, -50, -20]) cylinder(100, r=5);
+                translate([-115, -50, -20]) cylinder(100, r=5);
                 translate([0, 56, -20]) cylinder(100, r=3.5);
             }
             
             $fn = 160;
             rotate_extrude() translate([br, 0]) lid_cutout_shape();
+            
+            // Anti flex bars
+            w = br * 2;
+            h = 1.6;
+            d = 8;
+            b = 20;
+            n = 9;
+            
+            translate([0, b - n, d/2]) cube([w,h,d], center=true);
+            translate([0, -b - n, d/2]) cube([w - 5,h,d], center=true);
         }
         translate([0, -d/2]) cube([br*2, br*2, 40], center=true);
         translate([0, d/2]) cube([br*2, br*2, 40], center=true);
@@ -254,38 +268,46 @@ module pump_mount() {
 
     difference() {
         hull() standoffs(h, w, d, r);
-        translate([-9, 0, 130]) rotate([90, 0, 90]) three_way_valve_mount();
-        translate([-9, 0, 50]) rotate([90, 0, 90]) three_way_valve_mount();
+        translate([-8.5, 0, 115]) rotate([90, 0, 90]) three_way_valve_mount();
+        translate([-8.5, 0, 50]) rotate([90, 0, 90]) three_way_valve_mount();
     }
 }
 
 module pump_bracket() {
     t = 1.6;
-    h = 20;
+    h = 10;
     y = 22;
-    r = 27.1 / 2;  // outer diameter of pump
-    g = 5; // gap
+    r = 26.5 / 2;  // outer diameter of pump
+    g = 8; // gap
     r1 = 1.5;
     o = 4;
     
+    r2 = 50;
     
-    difference() {
-        union() {
-            translate([0, -r - t]) difference() {
-                // translate([0, 5]) cube([t, h, h]);
-                cylinder(h, r=r+t);
-                cylinder(h, r=r);
+    intersection() {
+        difference() {
+            union() {
+                translate([0, -r - t]) difference() {
+                    $fn = 50;
+                    // translate([0, 5]) cube([t, h, h]);
+                    cylinder(h, r=r+t);
+                    cylinder(h, r=r);
+                }
+                translate([0, r2 - t - 0.5]) difference() {
+                    cylinder(h, r=r2, $fn=120);
+                    cylinder(h, r=r2 - t, $fn=120);
+                }
             }
-            translate([0, 0, h/2]) rotate([90, 0]) hull() standoffs(t, y, h/2, 2);
+            translate([-g/2, -10]) cube([g, h, h]);
+            translate([0,3,h/2]) pump_bracket_screw_holes();
         }
-        translate([-g/2, -10]) cube([g, h, h]);
-        pump_bracket_screw_holes();
+        translate([0, -10]) cylinder(h, r=25);
     }
 }
 
 module pump_bracket_screw_holes(r=default_screw_radius) {
     o = 4;
-    y = 22;
+    y = 21.5;
     
     translate([-y + o, 0]) rotate([90, 0]) cylinder(10, r=r);
     translate([y - o, 0]) rotate([90, 0]) cylinder(10, r=r);
@@ -384,8 +406,8 @@ module solenoid_funnel() {
     translate([0, 0, h]) rotate([180, 0]) ScrewThread(21.336, h, pitch=2.209);
     
     // Hole for drain line
-    translate([0, 0, 20]) rotate([90, 0, 90]) cylinder(100, r=5);
-    translate([0, 0, 20]) rotate([90, 00, 90 + 30]) cylinder(100, r=5);
+    translate([0, 0, 20]) rotate([90, 0, 90-45]) cylinder(60, r=5);
+    translate([0, 0, 20]) rotate([90, 0, 90+45]) cylinder(60, r=5);
     // english_thread(diameter=1.05, threads_per_inch=14, length=3/4, taper=1/16);
 }
 
