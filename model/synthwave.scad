@@ -79,8 +79,7 @@ module base() {
         a = 45;
         translate([dist, y, -5]) mirror([1, 0]) rotate([180, 180])  solenoid_funnel();
         translate([-dist, y, -5]) rotate([180, 180]) solenoid_funnel();
-        translate([0, rw-1, 90]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center");
-        
+        translate([0, rw-1, 105]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center", spacing=1.2);
     }
 
     module rear_wall() {
@@ -143,14 +142,14 @@ module lid() {
             rotate_extrude() translate([br, 0]) lid_cutout_shape();
             
             // Anti flex bars
-            w = br * 2;
+            w = br * 2 - 24;
             h = 1.6;
             d = 8;
-            b = 20;
-            n = 9;
+            b = 58;
+            n = 0;
             
             translate([0, b - n, d/2]) cube([w,h,d], center=true);
-            translate([0, -b - n, d/2]) cube([w - 5,h,d], center=true);
+            translate([0, -b - n, d/2]) cube([w,h,d], center=true);
         }
         translate([0, -d/2]) cube([br*2, br*2, 40], center=true);
         translate([0, d/2]) cube([br*2, br*2, 40], center=true);
@@ -159,25 +158,51 @@ module lid() {
 
 module top_shelf() {
     w = 80;
-    h = 20;
-    d = 1.6;
-    r = 2;
-    
-    r2 = 5;
+    h = 22;
+    t = 3;
+    d = 15 + t;
+    r = 10;
+
+    r2 = 3; // screw head size
     r3 = default_screw_radius;
     d2 = 58; // see shelf_brackets below
     d3 = 14 / 2;
     o = 3;
-    a = 8;
     
     difference() {
         hull() standoffs(d,w,h,r);
-        translate([a, 0]) cylinder(h, r=r2);
-        translate([-a, 0]) cylinder(h, r=r2);
+        
+        // screw holes
         translate([d2, d3 + o]) cylinder(100, r=r3);
         translate([d2, -d3 + o]) cylinder(100, r=r3);
         translate([-d2, d3 + o]) cylinder(100, r=r3);
         translate([-d2, -d3 + o]) cylinder(100, r=r3);
+        
+        // screw heads
+        translate([d2, d3 + o, t-1.6]) cylinder(100, r=r2);
+        translate([d2, -d3 + o, t-1.6]) cylinder(100, r=r2);
+        translate([-d2, d3 + o, t-1.6]) cylinder(100, r=r2);
+        translate([-d2, -d3 + o, t-1.6]) cylinder(100, r=r2);
+        
+        
+        translate([25, 0, t]) vac_footprint(h+1);
+        mirror([1, 0]) translate([25, 0, t]) vac_footprint(h+1);
+    }
+    
+}
+
+
+
+module vac_footprint(h) {
+    x = 39;
+    y = 63;
+    z = h;
+    r = 10;
+    
+    rotate([0, 0, 90]) translate([-x/2, -y+r*2]) hull() {
+        cube([x, y-r*2, z]);
+        translate([x-r, 0]) cylinder(z, r=r);
+        translate([r, 0]) cylinder(z, r=r);
     }
 }
 
