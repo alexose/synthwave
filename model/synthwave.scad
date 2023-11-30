@@ -1,8 +1,7 @@
 use <threads.scad>
 
-
 // TODO: Improve degasser mount
-// TODO: Design vac pump shelf
+// TODO: Fix pcb hole spacing
 
 base_radius = 283 / 2; // inner diameter of 5 gallon bucket in mm
 
@@ -28,14 +27,14 @@ default_screw_radius = 1;
 
 $fn = 20;
 
-render_base = 1;
+render_base = 0;
 render_electrode_holder = 0;
 render_breadboard_cover = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
 render_strain_relief = 0;
 render_top_shelf = 0;
-
+render_standoffs = 1;
 
 if (render_base) base();
 if (render_electrode_holder) electrode_holder();
@@ -44,6 +43,7 @@ if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
 if (render_strain_relief) strain_relief();
 if (render_top_shelf) top_shelf();
+if (render_standoffs) pcb_standoffs();
 
 module base() {
     border_width = 10;
@@ -490,6 +490,19 @@ module breadboard_cover_screw_holes(r=default_screw_radius) {
     standoffs(h, x/2 + r, y + 8 + r, r);
 }
 
+// Helps to separate the PCB from the shell
+module pcb_standoffs() {
+    h = 10;
+    w = 5;
+    d = 5;
+    r1 = 1;
+    r2 = 2;
+    
+    difference() {
+        standoffs(h, w + r1, d + r1, r2);
+        standoffs(h, w, d, r1);
+    }
+}
 
 module pcb_screw_holes(r=default_screw_radius) {
     f = 3; // fit tolerance
@@ -500,8 +513,6 @@ module pcb_screw_holes(r=default_screw_radius) {
     
     standoffs(h, x/2 + r, y + 8 + r, r);
 }
-
-
 
 module strain_relief() {
     h = 15;
