@@ -8,16 +8,16 @@
 #include <AsyncElegantOTA.h>
 #include "heltec.h"
 
-#define DEVICE_PUMP1 14
-#define DEVICE_PUMP2 27  // maybe
-#define DEVICE_VAC1 13
-#define DEVICE_VAC2 12
-#define DEVICE_SOLENOID1 25  // also LED?
-#define DEVICE_SOLENOID2 33
-#define DEVICE_SOLENOID3 32
-#define DEVICE_SOLENOID4 17
-#define DEVICE_RELEASE1 2
-#define DEVICE_RELEASE2 23
+#define DEVICE_PUMP1 7
+#define DEVICE_PUMP2 6  // maybe
+#define DEVICE_VAC1 5
+#define DEVICE_VAC2 4
+#define DEVICE_SOLENOID1 3  // also LED?
+#define DEVICE_SOLENOID2 2
+#define DEVICE_SOLENOID3 1
+#define DEVICE_SOLENOID4 46
+#define DEVICE_RELEASE1 45
+#define DEVICE_RELEASE2 42
 
 const char *ssid = "Thompson Creek Yacht Club";
 const char *password = "winecountry";
