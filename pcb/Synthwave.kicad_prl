@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 31,
+    "active_layer": 37,
     "active_layer_preset": "",
     "auto_track_width": true,
     "hidden_netclasses": [],
@@ -67,7 +67,7 @@
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "Synthwave v2.kicad_prl",
+    "filename": "Synthwave_Smaller_Edition.kicad_prl",
     "version": 3
   },
   "project": {

@@ -1,7 +1,5 @@
 use <threads.scad>
 
-// TODO: Improve degasser mount
-// TODO: Fix pcb hole spacing
 // TODO: Add holes for degasser tubing
 
 base_radius = 283 / 2; // inner diameter of 5 gallon bucket in mm
@@ -14,7 +12,7 @@ pump_mount_depth = 8;
 pump_mount_height = container_height + 20;
 
 rear_wall_height = 250;
-rear_wall_width = 128; // needs to accomodate two breadboards
+rear_wall_width = 128;
 rear_wall_thickness = 2;
 
 electrode_holder_width = 20;
@@ -28,21 +26,17 @@ default_screw_radius = 1;
 
 $fn = 20;
 
-render_base = 0;
+render_base = 1;
 render_electrode_holder = 0;
-render_breadboard_cover = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
-render_strain_relief = 0;
-render_top_shelf = 1;
+render_top_shelf = 0;
 render_standoffs = 0;
 
 if (render_base) base();
 if (render_electrode_holder) electrode_holder();
-if (render_breadboard_cover) breadboard_cover();
 if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
-if (render_strain_relief) strain_relief();
 if (render_top_shelf) top_shelf();
 if (render_standoffs) pcb_standoffs();
 
@@ -80,7 +74,7 @@ module base() {
         a = 45;
         translate([dist, y, -5]) mirror([1, 0]) rotate([180, 180])  solenoid_funnel();
         translate([-dist, y, -5]) rotate([180, 180]) solenoid_funnel();
-        translate([0, rw-1, 105]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center", spacing=1.2);
+        translate([0, rw-1, 105]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center", spacing=1.3);
     }
 
     module rear_wall() {
@@ -94,8 +88,10 @@ module base() {
         
         difference() {
             hull() standoffs(h, w, o, r);
-            translate([0, -1, 130]) rotate([-90, 0]) breadboard_cover_screw_holes();
-            translate([0, -1, 130]) rotate([-90, 0]) pcb_screw_holes();
+            translate([0, -1, 155]) rotate([-90, 0]) pcb_screw_holes();
+            translate([-17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
+            translate([0, -1, 95]) rotate([-90, 0]) ph_meter_screw_holes();
+            translate([17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
             rear_wall_cutouts();
         }
         
@@ -450,44 +446,9 @@ module screw_brackets(h, w, d) {
     translate([-w, -d]) screw_bracket();
 }
 
-module breadboard_cover() {
-    f = 3; // fit tolerance
-    t = 1.6; // wall thickness
-    h = 30;
-    r = 2;
-    
-    x = 55 + f;
-    y = (165 + f) / 2;
-    
-    difference() {
-        union() {
-            hull() standoffs(h, x+t/2, y+t/2, r);
-            translate([0, 0, h]) mirror([0,0,1]) screw_brackets(h, x/2, y+t/2);
-        }
-        translate([0, 0, t]) hull() standoffs(h, x, y, r);
-        translate([0, 0, h - 22]) breadboard_cover_screw_holes(5);
-        translate([0, 0, h - 10]) breadboard_cover_screw_holes();
-        hull() {
-            translate([0, y + 5, h]) rotate([90, 90]) cylinder(y*2 + 10, r=6);
-            translate([0, y + 5, h - 12]) rotate([90, 90]) cylinder(y*2 + 10, r=6);
-        }
-    }
-
-}
-
 module screw_bracket() {
     w = 1;
     scale(15) translate([w/2, 0, w]) rotate([0, 90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
-}
-
-module breadboard_cover_screw_holes(r=default_screw_radius) {
-    f = 3; // fit tolerance
-    t = 1.6; // wall thickness
-    h = 20;
-    x = 55 + f;
-    y = (165 + f) / 2;
-    
-    standoffs(h, x/2 + r, y + 8 + r, r);
 }
 
 // Helps to separate the PCB from the shell
@@ -505,22 +466,19 @@ module pcb_standoffs() {
 }
 
 module pcb_screw_holes(r=default_screw_radius) {
-    f = 3; // fit tolerance
-    t = 1.6; // wall thickness
     h = 20;
-    x = 62.9 / 2;
-    y = 130.2 / 2;
+    x = 52.070 / 2;
+    y = 97.790 / 2;
     
-    standoffs(h, x/2 + r, y + 8 + r, r);
+    standoffs(h, x+r, y+r, r);
 }
 
-module strain_relief() {
-    h = 15;
+module ph_meter_screw_holes(r=default_screw_radius) {
+    h = 20;
+    x = 25 / 2;
     
-    difference() {
-        linear_extrude(h) scale([0.8, 1, 1]) polygon([[-32,0],[-32,7],[32,7],[32,0],[40,0],[40,-2],[30,-2],[30,5],[-30,5],[-30,-2],[-40,-2],[-40,0]]);
-         translate([0, 10, 99]) rotate([90, 0]) breadboard_cover_screw_holes(r=default_screw_radius);
-      }
+    translate([-x, 0]) cylinder(20, r=r);
+    translate([x, 0]) cylinder(20, r=r);
 }
 
 module three_way_valve_screw_holes(r=default_screw_radius) {

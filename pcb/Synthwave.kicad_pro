@@ -465,11 +465,23 @@
       },
       {
         "netclass": "Logic Circuits",
-        "pattern": "*U2*"
+        "pattern": "*U1*"
       },
       {
         "netclass": "Logic Circuits",
         "pattern": "*Q*"
+      },
+      {
+        "netclass": "Logic Circuits",
+        "pattern": "*J*"
+      },
+      {
+        "netclass": "Logic Circuits",
+        "pattern": "*P1*"
+      },
+      {
+        "netclass": "Default",
+        "pattern": "*E2*"
       }
     ]
   },
@@ -507,7 +519,7 @@
     "meta": {
       "version": 1
     },
-    "net_format_name": "",
+    "net_format_name": "KiCad",
     "page_layout_descr_file": "",
     "plot_directory": "",
     "spice_current_sheet_as_root": false,
