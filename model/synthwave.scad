@@ -2,6 +2,7 @@ use <threads.scad>
 
 // TODO: Improve degasser mount
 // TODO: Fix pcb hole spacing
+// TODO: Add holes for degasser tubing
 
 base_radius = 283 / 2; // inner diameter of 5 gallon bucket in mm
 
@@ -33,8 +34,8 @@ render_breadboard_cover = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
 render_strain_relief = 0;
-render_top_shelf = 0;
-render_standoffs = 1;
+render_top_shelf = 1;
+render_standoffs = 0;
 
 if (render_base) base();
 if (render_electrode_holder) electrode_holder();
@@ -192,7 +193,6 @@ module top_shelf() {
 }
 
 
-
 module vac_footprint(h) {
     x = 39;
     y = 63;
@@ -200,7 +200,7 @@ module vac_footprint(h) {
     r = 10;
     
     rotate([0, 0, 90]) translate([-x/2, -y+r*2]) hull() {
-        cube([x, y-r*2, z]);
+        cube([x, y-r, z]);
         translate([x-r, 0]) cylinder(z, r=r);
         translate([r, 0]) cylinder(z, r=r);
     }

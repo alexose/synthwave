@@ -405,7 +405,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "Synthwave v2.kicad_pro",
+    "filename": "Synthwave.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -477,7 +477,7 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "",
+      "netlist": "Synthwave.net",
       "specctra_dsn": "",
       "step": "",
       "vrml": ""

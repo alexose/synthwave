@@ -29,7 +29,7 @@
                 }
 
                 const url = new URL(
-                    `http://192.168.1.10/api/device/${device.key.toLowerCase()}`,
+                    `http://192.168.1.203/api/device/${device.key.toLowerCase()}`,
                     window.location.origin
                 );
                 Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
