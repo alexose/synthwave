@@ -1,7 +1,5 @@
 use <threads.scad>
 
-// TODO: Add holes for degasser tubing
-
 base_radius = 283 / 2; // inner diameter of 5 gallon bucket in mm
 
 container_bottom_radius = 89 / 2;
@@ -11,9 +9,9 @@ container_height = 135.3;
 pump_mount_depth = 8;
 pump_mount_height = container_height + 20;
 
-rear_wall_height = 250;
+rear_wall_height = 242;
 rear_wall_width = 128;
-rear_wall_thickness = 2;
+rear_wall_thickness = 3;
 
 electrode_holder_width = 20;
 electrode_holder_height = 12;
@@ -24,9 +22,10 @@ distance_between_containers = 14;
 
 default_screw_radius = 1;
 
-$fn = 20;
+$fn = 50;
 
 render_base = 1;
+render_base_no_lid = 0;
 render_electrode_holder = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
@@ -34,13 +33,14 @@ render_top_shelf = 0;
 render_standoffs = 0;
 
 if (render_base) base();
+if (render_base_no_lid) base(false);
 if (render_electrode_holder) electrode_holder();
 if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
 if (render_top_shelf) top_shelf();
 if (render_standoffs) pcb_standoffs();
 
-module base() {
+module base(include_lid=true) {
     border_width = 10;
     dr = container_bottom_radius;
     bw = border_width;
@@ -60,7 +60,9 @@ module base() {
     
     difference() {
         union() {
-            lid();
+            if (include_lid) {
+                lid();
+            }
             translate([dist, y]) cylinder(30, r=dr+2, $fn = 140);
             translate([-dist, y]) cylinder(30, r=dr+2, $fn = 140);
             translate([pw, y]) mirror([0, 1, 0]) rotate([0, 0, 180]) pump_mount();
@@ -68,13 +70,12 @@ module base() {
             translate([0, rw]) rear_wall();
             translate([pw + 4, 54.5, 107]) band(35);
             translate([-pw - 4, 54.5, 107]) mirror([1,0,0]) band(35);
-
         }
         
         a = 45;
         translate([dist, y, -5]) mirror([1, 0]) rotate([180, 180])  solenoid_funnel();
         translate([-dist, y, -5]) rotate([180, 180]) solenoid_funnel();
-        translate([0, rw-1, 105]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center", spacing=1.3);
+        translate([0, rw-2, 105]) rotate([90, 270, 0]) linear_extrude(1.2) text("synthwave", size=20, halign="center", valign="center", spacing=1.3);
     }
 
     module rear_wall() {
@@ -87,23 +88,17 @@ module base() {
         h2 = 60;
         
         difference() {
-            hull() standoffs(h, w, o, r);
+            rotate([90, 0]) rear_wall_polygon();
             translate([0, -1, 155]) rotate([-90, 0]) pcb_screw_holes();
             translate([-17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
             translate([0, -1, 95]) rotate([-90, 0]) ph_meter_screw_holes();
             translate([17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
-            rear_wall_cutouts();
+            
+            // rear_wall_holes();
         }
         
         // Lower shelf
-        translate([0, 0, 180]) difference() {
-            shelf_brackets();
-            d = 150;
-            translate([-d/2, -18, 30]) rotate([0, 90]) cylinder(d, r=5);
-        }
-        
-        // Upper shelf
-        translate([0, 0, 220]) shelf_brackets(true);
+        translate([0, 0, 176.8]) lower_shelf(false, true);
         
         module rear_wall_cutouts() {
             r = 120;
@@ -115,6 +110,33 @@ module base() {
             translate([r + c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
             translate([-r - c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
         }
+        
+        module rear_wall_holes() {
+            r = 12/2;
+            c = 48.3/2;
+            h = 30;
+            b = 205;
+            $fn = 80;
+            
+            translate([r + c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
+            translate([-r - c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
+        }
+        
+        module rear_wall_polygon() {
+        h = rear_wall_height;
+        w = rear_wall_width;
+        t = rear_wall_thickness;
+        
+        hf = h / 32;
+        wf = w / 24;
+        
+        // 24x32
+        scale([wf, hf, t]) 
+        translate([-12, 0]) 
+        linear_extrude(1)
+        polygon([[2,0/*1:0,0,0,0*/] ,[3.07,0] ,[4.08,0] ,[5.13,0] ,[6.32,0] ,[7.36,0] ,[8.47,0] ,[9.62,0] ,[10.8,0] ,[12,0] ,[13.2,0] ,[14.38,0] ,[15.53,0] ,[16.64,0] ,[17.68,0] ,[18.88,0] ,[19.92,0] ,[20.93,0] ,[21.95,0],[22,0/*1:0,0,0,0*/] ,[21.5,0.87] ,[20.97,1.87] ,[20.53,2.77] ,[20.07,3.81] ,[19.6,4.96] ,[19.25,5.95] ,[18.92,6.99] ,[18.63,8.07] ,[18.39,9.18] ,[18.21,10.31] ,[18.11,11.45] ,[18.1,12.58] ,[18.19,13.71] ,[18.39,14.81] ,[18.72,15.87] ,[19.18,16.9] ,[19.8,17.87] ,[20.58,18.77] ,[21.53,19.6] ,[22.36,20.17] ,[23.31,20.69],[24,21/*1:-12,-5,0,5*/] ,[24,22.01] ,[24,23.05] ,[24,24.1] ,[24,25.1] ,[24,26.17] ,[24,27.18],[24,28/*1:0,0,0,0*/] ,[22.89,28] ,[21.73,28] ,[20.52,28] ,[19.41,28] ,[18.2,28] ,[16.91,28] ,[15.9,28] ,[14.86,28] ,[13.79,28] ,[12.72,28] ,[11.64,28] ,[10.56,28] ,[9.5,28] ,[8.45,28] ,[7.43,28] ,[6.12,28] ,[4.88,28] ,[3.75,28] ,[2.73,28] ,[1.65,28] ,[0.55,28],[0,28/*1:0,0,0,0*/] ,[0,26.98] ,[0,25.94] ,[0,24.91] ,[0,23.88] ,[0,22.8] ,[0,21.73],[0,21/*1:0,5,12,-5*/] ,[1.02,20.52] ,[1.93,19.99] ,[2.97,19.2] ,[3.83,18.33] ,[4.53,17.39] ,[5.07,16.39] ,[5.46,15.34] ,[5.72,14.26] ,[5.87,13.15] ,[5.91,12.02] ,[5.85,10.88] ,[5.71,9.75] ,[5.5,8.63] ,[5.23,7.53] ,[4.92,6.47] ,[4.58,5.45] ,[4.21,4.49] ,[3.74,3.38] ,[3.29,2.39] ,[2.79,1.4] ,[2.27,0.45]]);
+        }
+        
     }
 }
 
@@ -153,6 +175,14 @@ module lid() {
     }
 }
 
+module lower_shelf(makeSquare=false, extraHoles=false) {
+    difference() {
+        shelf_brackets(true, makeSquare, extraHoles);
+        d = 150;
+        translate([-d/2, -18, 35]) rotate([0, 90]) cylinder(d, r=5);
+    }
+}
+
 module top_shelf() {
     w = 80;
     h = 22;
@@ -162,32 +192,35 @@ module top_shelf() {
 
     r2 = 3; // screw head size
     r3 = default_screw_radius;
-    d2 = 58; // see shelf_brackets below
+    
+    d2 = 59; // see shelf_brackets below
     d3 = 14 / 2;
-    o = 3;
+    o = 18;
+    v = 1.6;
     
     difference() {
         hull() standoffs(d,w,h,r);
         
         // screw holes
-        translate([d2, d3 + o]) cylinder(100, r=r3);
-        translate([d2, -d3 + o]) cylinder(100, r=r3);
-        translate([-d2, d3 + o]) cylinder(100, r=r3);
-        translate([-d2, -d3 + o]) cylinder(100, r=r3);
+        translate([d2, o]) shelf_screw_holes();
+        translate([-d2, o]) shelf_screw_holes();
         
         // screw heads
-        translate([d2, d3 + o, t-1.6]) cylinder(100, r=r2);
-        translate([d2, -d3 + o, t-1.6]) cylinder(100, r=r2);
-        translate([-d2, d3 + o, t-1.6]) cylinder(100, r=r2);
-        translate([-d2, -d3 + o, t-1.6]) cylinder(100, r=r2);
+        translate([d2, o, v]) shelf_screw_holes(r2);
+        translate([-d2, o, v]) shelf_screw_holes(r2);
         
         
         translate([25, 0, t]) vac_footprint(h+1);
         mirror([1, 0]) translate([25, 0, t]) vac_footprint(h+1);
     }
     
+    // Kind of hacky approach but it's all I can think of right now
+    cutoff = 20;
+    translate([0, -25]) difference() {
+        translate([0, 0, -cutoff]) lower_shelf(true);
+        translate([0, 0, -100]) cube(200, center=true);
+    }
 }
-
 
 module vac_footprint(h) {
     x = 39;
@@ -206,50 +239,53 @@ module container_cover() {
 
     container_top_upper_radius = 109 / 2;
 
-    h1 = 3;
+    h1 = 1.6;
     h2 = 8;
     r1 = container_top_upper_radius;
     r2 = r1 + 5;
     r3 = 25/2;
     r4 = 30/2;
+    $fn = 80;
     
     d = distance_between_containers;
     a = r1*2 + d/2 + r3 + 8;
+    t = 1.2;
     
-    scale([2, 1, 1]) cylinder(h1, r=r3);
     cover();
     mirror([1, 0, 0]) cover();
     
     module cover() {
         difference() {
-            half();
-            holes();
+            union() {
+                holes(1.2);
+                half();
+            }
+            scale([1, 1, 2]) holes();
         }
     }
     
     module half() {
-        translate([r1 + d/2, 0]) cylinder(h2, r1, r1-0.5);
-        translate([r1 + d/2, 0]) cylinder(h1, r=r2);
         difference() {
-            hull() {
-                translate([r1 + d/2, 0]) cylinder(h1, r=r2/2);
-                translate([a, 0]) cylinder(h1, r=r4);
-            }
-            translate([a, 0]) cylinder(h1, r=r3);
+            translate([r1 + d/2, 0]) cylinder(h2, r1, r1-0.5);
+            translate([r1 + d/2, 0]) cylinder(h2, r1 - t, r1-0.5 - t);
         }
+        translate([r1 + d/2, 0]) cylinder(h1, r=r2);
     }
     
-    module holes() {
+    module holes(t=0) {
         f = 2;
         w = electrode_holder_width + f;
-        h = electrode_holder_height + f;
         d = electrode_holder_depth + f;
         r = electrode_holder_radius;
+        h = 10;
         
         o = r1 + d/2;
-        translate([o + 30, 20]) cylinder(h*3, r=5); // tube holder
-        translate([o + 30, -20]) cylinder(h*3, r=15/2); // pH probe holder
-        translate([o, 0]) hull() standoffs(h, w, d, r);
+        translate([o + 30, 20, 1]) cylinder(h, r=14.5/2 + t, $fn=6); // switch holder
+        translate([o + 30, 20]) cylinder(h, r=8.5/2 + t, $fn=80); // switch holder
+        translate([o + 30, -20]) cylinder(h, r=13/2 + t, $fn=80); // pH probe holder
+        
+        $fn = 20;
+        translate([o, 0]) hull() standoffs(h, w + t, d + t, r);
     }
 }
 
@@ -260,9 +296,9 @@ module lid_cutout_shape() {
 
 }
 
-module shelf_brackets(holes=false) {
+module shelf_brackets(holes=false, makeSquare=false, bottomBracket=false) {
     w = 10;
-    d = 58; // Needs to be about 105mm apart to accomodate membrane contactor
+    d = 59; // Needs to be about 105mm apart to accomodate membrane contactor
     
     if (holes) {
         translate([d, 0]) shelf_bracket_with_holes();
@@ -274,11 +310,33 @@ module shelf_brackets(holes=false) {
     
     module shelf_bracket_with_holes() {
         difference() {
-            shelf_bracket(w);
-            translate([0, -8]) cylinder(100, r=default_screw_radius);
-            translate([0, -22]) cylinder(100, r=default_screw_radius);
+            shelf_bracket(w, makeSquare);
+            shelf_screw_holes();
+            
+            if (bottomBracket) {
+                translate([0, 0, -68]) shelf_screw_holes(2.2);
+            }
         }
     }
+}
+
+module shelf_bracket(w, makeSquare) {
+    s = 35;
+    w = w / s;
+    
+    scale(s) translate([-w/2, 0]) rotate([0, -90, 180]) linear_extrude(w) {
+        if (makeSquare) {
+            polygon([[0,0],[1,0],[1,1],[0,1]]);
+        } else {
+            polygon([[0,0],[1,0],[1,1]]);
+        }
+    }
+}
+
+
+module shelf_screw_holes(r=default_screw_radius) {
+    translate([0, -7]) cylinder(100, r=r);
+    translate([0, -28]) cylinder(100, r=r);
 }
 
 module pump_mount() {
@@ -394,11 +452,6 @@ module nickel_strip_cutout() {
     }
 }
 
-module shelf_bracket(w) {
-    w = w / 30;
-    scale(30) translate([-w/2, 0]) rotate([0, -90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
-}
-
 module clip() {
     y1 = 6;
     y2 = 14;
@@ -418,13 +471,14 @@ module solenoid_funnel() {
     h = 15;
     r1 = 15;
     r2 = container_bottom_radius;
+    diameter = 21.336 + 0.5; // adding 0.5mm because otherwise it's very difficult to screw in the solenoids
     
     $fn = 100;
      
     translate([0, 0, h]) cylinder(h, r1, r2 - 2);
     translate([0, 0, h*2-4]) container();
     
-    translate([0, 0, h]) rotate([180, 0]) ScrewThread(21.336, h, pitch=2.209);
+    translate([0, 0, h]) rotate([180, 0]) ScrewThread(diameter, h, pitch=2.209);
     
     // Hole for drain line
     translate([0, 0, 20]) rotate([90, 0, 90-45]) cylinder(60, r=5);

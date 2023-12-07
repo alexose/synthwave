@@ -449,27 +449,18 @@
       "version": 3
     },
     "net_colors": null,
-    "netclass_assignments": null,
+    "netclass_assignments": {
+      "+15V": "Thicc",
+      "GND": "Default"
+    },
     "netclass_patterns": [
       {
         "netclass": "Logic Circuits",
-        "pattern": "*U1*"
-      },
-      {
-        "netclass": "Logic Circuits",
-        "pattern": "*R1*"
-      },
-      {
-        "netclass": "Logic Circuits",
-        "pattern": "*P2*"
+        "pattern": "*GND1"
       },
       {
         "netclass": "Logic Circuits",
         "pattern": "*U1*"
-      },
-      {
-        "netclass": "Logic Circuits",
-        "pattern": "*Q*"
       },
       {
         "netclass": "Logic Circuits",
@@ -477,11 +468,11 @@
       },
       {
         "netclass": "Logic Circuits",
-        "pattern": "*P1*"
+        "pattern": "*Q*"
       },
       {
-        "netclass": "Default",
-        "pattern": "*E2*"
+        "netclass": "Logic Circuits",
+        "pattern": "*5V*"
       }
     ]
   },
@@ -519,7 +510,7 @@
     "meta": {
       "version": 1
     },
-    "net_format_name": "KiCad",
+    "net_format_name": "",
     "page_layout_descr_file": "",
     "plot_directory": "",
     "spice_current_sheet_as_root": false,
