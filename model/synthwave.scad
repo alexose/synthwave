@@ -9,7 +9,7 @@ container_height = 135.3;
 pump_mount_depth = 8;
 pump_mount_height = container_height + 20;
 
-rear_wall_height = 242;
+rear_wall_height = 245;
 rear_wall_width = 128;
 rear_wall_thickness = 3;
 
@@ -29,7 +29,6 @@ render_base_no_lid = 0;
 render_electrode_holder = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
-render_top_shelf = 0;
 render_standoffs = 0;
 
 if (render_base) base();
@@ -37,7 +36,6 @@ if (render_base_no_lid) base(false);
 if (render_electrode_holder) electrode_holder();
 if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
-if (render_top_shelf) top_shelf();
 if (render_standoffs) pcb_standoffs();
 
 module base(include_lid=true) {
@@ -89,16 +87,13 @@ module base(include_lid=true) {
         
         difference() {
             rotate([90, 0]) rear_wall_polygon();
-            translate([0, -1, 155]) rotate([-90, 0]) pcb_screw_holes();
-            translate([-17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
-            translate([0, -1, 95]) rotate([-90, 0]) ph_meter_screw_holes();
-            translate([17, -1, 215]) rotate([-90, 0]) ph_meter_screw_holes();
-            
-            // rear_wall_holes();
+            translate([0, -1, 115]) rotate([-90, 0]) pcb_screw_holes();
+            translate([-17, -1, 175]) rotate([-90, 0]) ph_meter_screw_holes();
+            translate([0, -1, 55]) rotate([-90, 0]) ph_meter_screw_holes();
+            translate([17, -1, 175]) rotate([-90, 0]) ph_meter_screw_holes();  
         }
         
-        // Lower shelf
-        translate([0, 0, 176.8]) lower_shelf(false, true);
+        translate([0, 0, 175]) shelf();
         
         module rear_wall_cutouts() {
             r = 120;
@@ -132,9 +127,9 @@ module base(include_lid=true) {
         
         // 24x32
         scale([wf, hf, t]) 
-        translate([-12, 0]) 
+        translate([-12, 0])
         linear_extrude(1)
-        polygon([[2,0/*1:0,0,0,0*/] ,[3.07,0] ,[4.08,0] ,[5.13,0] ,[6.32,0] ,[7.36,0] ,[8.47,0] ,[9.62,0] ,[10.8,0] ,[12,0] ,[13.2,0] ,[14.38,0] ,[15.53,0] ,[16.64,0] ,[17.68,0] ,[18.88,0] ,[19.92,0] ,[20.93,0] ,[21.95,0],[22,0/*1:0,0,0,0*/] ,[21.5,0.87] ,[20.97,1.87] ,[20.53,2.77] ,[20.07,3.81] ,[19.6,4.96] ,[19.25,5.95] ,[18.92,6.99] ,[18.63,8.07] ,[18.39,9.18] ,[18.21,10.31] ,[18.11,11.45] ,[18.1,12.58] ,[18.19,13.71] ,[18.39,14.81] ,[18.72,15.87] ,[19.18,16.9] ,[19.8,17.87] ,[20.58,18.77] ,[21.53,19.6] ,[22.36,20.17] ,[23.31,20.69],[24,21/*1:-12,-5,0,5*/] ,[24,22.01] ,[24,23.05] ,[24,24.1] ,[24,25.1] ,[24,26.17] ,[24,27.18],[24,28/*1:0,0,0,0*/] ,[22.89,28] ,[21.73,28] ,[20.52,28] ,[19.41,28] ,[18.2,28] ,[16.91,28] ,[15.9,28] ,[14.86,28] ,[13.79,28] ,[12.72,28] ,[11.64,28] ,[10.56,28] ,[9.5,28] ,[8.45,28] ,[7.43,28] ,[6.12,28] ,[4.88,28] ,[3.75,28] ,[2.73,28] ,[1.65,28] ,[0.55,28],[0,28/*1:0,0,0,0*/] ,[0,26.98] ,[0,25.94] ,[0,24.91] ,[0,23.88] ,[0,22.8] ,[0,21.73],[0,21/*1:0,5,12,-5*/] ,[1.02,20.52] ,[1.93,19.99] ,[2.97,19.2] ,[3.83,18.33] ,[4.53,17.39] ,[5.07,16.39] ,[5.46,15.34] ,[5.72,14.26] ,[5.87,13.15] ,[5.91,12.02] ,[5.85,10.88] ,[5.71,9.75] ,[5.5,8.63] ,[5.23,7.53] ,[4.92,6.47] ,[4.58,5.45] ,[4.21,4.49] ,[3.74,3.38] ,[3.29,2.39] ,[2.79,1.4] ,[2.27,0.45]]);
+        polygon([[2,0/*1:0,0,0,0*/] ,[3.07,0] ,[4.08,0] ,[5.13,0] ,[6.32,0] ,[7.36,0] ,[8.47,0] ,[9.62,0] ,[10.8,0] ,[12,0] ,[13.2,0] ,[14.38,0] ,[15.53,0] ,[16.64,0] ,[17.68,0] ,[18.88,0] ,[19.92,0] ,[20.93,0] ,[21.95,0],[22,0/*1:0,0,0,0*/] ,[21.5,0.87] ,[20.97,1.87] ,[20.53,2.77] ,[20.07,3.81] ,[19.6,4.96] ,[19.25,5.95] ,[18.92,6.99] ,[18.63,8.07] ,[18.39,9.18] ,[18.21,10.31] ,[18.11,11.45] ,[18.1,12.58] ,[18.19,13.71] ,[18.39,14.81] ,[18.72,15.87] ,[19.18,16.9] ,[19.8,17.87] ,[20.58,18.77] ,[21.53,19.6] ,[22.36,20.17] ,[23.31,20.69],[24,21/*1:-12,-5,0,5*/] ,[24,22.09] ,[24,23.16] ,[24,24.19],[24,25/*1:0,0,0,0*/] ,[22.9,25.16] ,[21.78,25.3] ,[20.71,25.42] ,[19.68,25.52] ,[18.54,25.61] ,[17.29,25.7] ,[16.23,25.76] ,[15.11,25.82] ,[13.93,25.86] ,[12.71,25.88] ,[11.45,25.89] ,[10.15,25.88] ,[8.81,25.84] ,[7.79,25.8] ,[6.76,25.75] ,[5.71,25.68] ,[4.65,25.59] ,[3.59,25.49] ,[2.52,25.36] ,[1.44,25.22] ,[0.36,25.06],[0,25/*1:12,2,0,-2*/] ,[0,23.99] ,[0,22.92] ,[0,21.82],[0,21/*1:0,5,12,-5*/] ,[1.02,20.52] ,[1.93,19.99] ,[2.97,19.2] ,[3.83,18.33] ,[4.53,17.39] ,[5.07,16.39] ,[5.46,15.34] ,[5.72,14.26] ,[5.87,13.15] ,[5.91,12.02] ,[5.85,10.88] ,[5.71,9.75] ,[5.5,8.63] ,[5.23,7.53] ,[4.92,6.47] ,[4.58,5.45] ,[4.21,4.49] ,[3.74,3.38] ,[3.29,2.39] ,[2.79,1.4] ,[2.27,0.45]]);
         }
         
     }
@@ -175,50 +170,43 @@ module lid() {
     }
 }
 
-module lower_shelf(makeSquare=false, extraHoles=false) {
+module shelf(makeSquare=false, extraHoles=false) {
     difference() {
-        shelf_brackets(true, makeSquare, extraHoles);
-        d = 150;
-        translate([-d/2, -18, 35]) rotate([0, 90]) cylinder(d, r=5);
+        translate([0, 0, -6]) shelf_brackets();
+        d1 = 220;
+        d2 = 220;
+        d3 = 150;
+        d4 = 100;
+        z = 20;
+        
+        // translate([-d1/2, -17, z]) rotate([0, 90]) cylinder(d1, r=5);
+        translate([-d2/2, -17, z]) rotate([0, 90]) cylinder(d2, r=6.5);
+        translate([-d4/2, -17, z]) rotate([0, 90]) cylinder(d4, r=14);
     }
 }
 
-module top_shelf() {
-    w = 80;
-    h = 22;
-    t = 3;
-    d = 15 + t;
-    r = 10;
 
-    r2 = 3; // screw head size
-    r3 = default_screw_radius;
-    
-    d2 = 59; // see shelf_brackets below
-    d3 = 14 / 2;
-    o = 18;
-    v = 1.6;
+module shelf_brackets() {
+    d = 67;
+
+    translate([d, -2]) rotate([0, 0, 270]) shelf_bracket();
+    mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) shelf_bracket();
+}
+
+module shelf_bracket() {
+    t = 2;
+    h = 40;
+    w = 67;
+    d = 10;
+    o = -5;
+    v = 5;
     
     difference() {
-        hull() standoffs(d,w,h,r);
-        
-        // screw holes
-        translate([d2, o]) shelf_screw_holes();
-        translate([-d2, o]) shelf_screw_holes();
-        
-        // screw heads
-        translate([d2, o, v]) shelf_screw_holes(r2);
-        translate([-d2, o, v]) shelf_screw_holes(r2);
-        
-        
-        translate([25, 0, t]) vac_footprint(h+1);
-        mirror([1, 0]) translate([25, 0, t]) vac_footprint(h+1);
-    }
-    
-    // Kind of hacky approach but it's all I can think of right now
-    cutoff = 20;
-    translate([0, -25]) difference() {
-        translate([0, 0, -cutoff]) lower_shelf(true);
-        translate([0, 0, -100]) cube(200, center=true);
+        hull() {
+            translate([o, -d/2 + 3, h]) scale(1.06) vac_footprint(v);
+            sphere(t);
+        }
+        translate([o + 0.6, -d/2 + 3, h+1]) vac_footprint(v);
     }
 }
 
@@ -294,49 +282,6 @@ module lid_cutout_shape() {
 
     scale(0.7) polygon([[3,10],[14,10],[15,17],[17,17],[17,0],[15,0],[14,7],[3,7],[2,0],[0,0],[0,17],[2,17]]);
 
-}
-
-module shelf_brackets(holes=false, makeSquare=false, bottomBracket=false) {
-    w = 10;
-    d = 59; // Needs to be about 105mm apart to accomodate membrane contactor
-    
-    if (holes) {
-        translate([d, 0]) shelf_bracket_with_holes();
-        translate([-d, 0]) shelf_bracket_with_holes();
-    } else {
-        translate([d, 0]) shelf_bracket(w);
-        translate([-d, 0]) shelf_bracket(w);
-    }
-    
-    module shelf_bracket_with_holes() {
-        difference() {
-            shelf_bracket(w, makeSquare);
-            shelf_screw_holes();
-            
-            if (bottomBracket) {
-                translate([0, 0, -68]) shelf_screw_holes(2.2);
-            }
-        }
-    }
-}
-
-module shelf_bracket(w, makeSquare) {
-    s = 35;
-    w = w / s;
-    
-    scale(s) translate([-w/2, 0]) rotate([0, -90, 180]) linear_extrude(w) {
-        if (makeSquare) {
-            polygon([[0,0],[1,0],[1,1],[0,1]]);
-        } else {
-            polygon([[0,0],[1,0],[1,1]]);
-        }
-    }
-}
-
-
-module shelf_screw_holes(r=default_screw_radius) {
-    translate([0, -7]) cylinder(100, r=r);
-    translate([0, -28]) cylinder(100, r=r);
 }
 
 module pump_mount() {
