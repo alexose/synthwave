@@ -71,23 +71,23 @@
                         key: "VAC2",
                     },
                     {
-                        name: "Solenoid 1",
-                        key: "SOLENOID1",
+                        name: "Valve 1",
+                        key: "VALVE1",
                         locking: true,
                     },
                     {
-                        name: "Solenoid 2",
-                        key: "SOLENOID2",
+                        name: "Valve 2",
+                        key: "VALVE2",
                         locking: true,
                     },
                     {
-                        name: "Solenoid 3",
-                        key: "SOLENOID3",
+                        name: "Valve 3",
+                        key: "VALVE3",
                         locking: true,
                     },
                     {
-                        name: "Solenoid 4",
-                        key: "SOLENOID4",
+                        name: "Valve 4",
+                        key: "VALVE4",
                         locking: true,
                     },
                     {
