@@ -28,10 +28,7 @@
                     params.duration = 1;
                 }
 
-                const url = new URL(
-                    `http://192.168.1.205/api/device/${device.key.toLowerCase()}`,
-                    window.location.origin
-                );
+                const url = new URL(`/api/device/${device.key.toLowerCase()}`, window.location.origin);
                 Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
                 try {

@@ -158,10 +158,10 @@ void toggleDevice(const String &deviceName, AsyncWebServerRequest *request) {
   // Toggle the state
   if (currentState == LOW) {
     digitalWrite(devicePin, HIGH);
-    output = output + " " + "off";
+    output = output + " " + "on";
   } else {
     digitalWrite(devicePin, LOW);
-    output = output + " " + "on";
+    output = output + " " + "off";
   }
 
   Heltec.display->clear();
