@@ -77,6 +77,4 @@ The most expensive individual part is the membrane contactor. It would be intere
 this part, but I'm not sure what this would be. The pH sensors are optional, but very useful to monitor system
 performance.
 
-There will also be a handful of 3D printed parts, which I am not including in the bill of materials for now.
-
 With careful attention to price, it would be possible to build this device for around $200.
