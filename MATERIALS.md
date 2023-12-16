@@ -70,8 +70,8 @@ this is a good opportunity to learn!
 -   Shrink tubing
 -   Wire strippers, needlenose pliers, soldering iron, etc.
 
-You should expect everything to cost **$370.38** total. Of course, it is much cheaper to source the parts from China if
-you don't mind the wait.
+You should expect everything to cost around **$400** total. Of course, it is quite a bit cheaper to source all the parts
+from China if you don't mind the wait.
 
 The most expensive individual part is the membrane contactor. It would be interesting to come up with an alternative for
 this part, but I'm not sure what this would be. The pH sensors are optional, but very useful to monitor system
