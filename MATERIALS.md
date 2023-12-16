@@ -5,7 +5,7 @@ time. If in doubt, make sure to cross-reference with photos of existing builds.
 
 ## Custom Parts
 
-Synthwave requires a few parts that can't be easily ordered off the internet. First is a 3d printed [shell](/models), as
+Synthwave requires a few parts that can't be easily ordered off the internet. First is a 3d printed [shell](/model), as
 well as several other 3d printed bits. I recommend using a good quality, large format 3d printer if possible. If you
 only have access to a small printer, you may need to get creative.
 
