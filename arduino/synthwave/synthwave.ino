@@ -9,7 +9,7 @@
 #include "heltec.h"
 
 #define DEVICE_PUMP1 7
-#define DEVICE_PUMP2 6  // maybe
+#define DEVICE_PUMP2 6
 #define DEVICE_VAC1 5
 #define DEVICE_VAC2 34
 #define DEVICE_VALVE1 33

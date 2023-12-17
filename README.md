@@ -25,8 +25,7 @@ electrochemical capture to a wider audience!
 ### Moving parts
 
 The hardware is based around cheap 12V devices (that can easily be sourced from Amazon or eBay) controlled by a common
-ESP32 microcontroller. The full list of materials is currently under development, but can be found in the
-[forum thread](https://www.openairforum.org/t/introducing-synthwave/806).
+ESP32 microcontroller. The full list of materials can be found [here](MATERIALS.md).
 
 ### 3D printed parts
 
