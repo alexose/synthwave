@@ -31,7 +31,10 @@ render_pump_bracket = 0;
 render_container_cover = 0;
 render_standoffs = 0;
 
-if (render_base) base();
+difference() {
+    if (render_base) base();
+    cube(350, center=true);
+}
 if (render_base_no_lid) base(false);
 if (render_electrode_holder) electrode_holder();
 if (render_pump_bracket) pump_bracket();
@@ -203,7 +206,7 @@ module shelf_bracket() {
     
     difference() {
         hull() {
-            translate([o, -d/2 + 3, h]) scale(1.06) vac_footprint(v);
+            translate([o - 0.7, -d/2 + 3, h]) scale(1.06) vac_footprint(v);
             sphere(t);
         }
         translate([o + 0.6, -d/2 + 3, h+1]) vac_footprint(v);

@@ -19,8 +19,8 @@
 #define DEVICE_RELEASE1 45
 #define DEVICE_RELEASE2 42
 
-const char *ssid = "Thompson Creek Yacht Club";
-const char *password = "winecountry";
+const char *ssid = "YOUR_SSID";
+const char *password = "YOUR_PASSWORD";
 
 AsyncWebServer server(80);
 
