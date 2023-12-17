@@ -29,16 +29,15 @@ render_base_no_lid = 0;
 render_electrode_holder = 0;
 render_pump_bracket = 0;
 render_container_cover = 0;
+render_back_cover = 0;
 render_standoffs = 0;
 
-difference() {
-    if (render_base) base();
-    cube(350, center=true);
-}
+if (render_base) base();
 if (render_base_no_lid) base(false);
 if (render_electrode_holder) electrode_holder();
 if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
+if (render_back_cover) back_cover();
 if (render_standoffs) pcb_standoffs();
 
 module base(include_lid=true) {
@@ -119,23 +118,25 @@ module base(include_lid=true) {
             translate([r + c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
             translate([-r - c, 10, b]) rotate([90, 0]) cylinder(h, r=r);
         }
-        
-        module rear_wall_polygon() {
-        h = rear_wall_height;
-        w = rear_wall_width;
-        t = rear_wall_thickness;
-        
-        hf = h / 32;
-        wf = w / 24;
-        
-        // 24x32
-        scale([wf, hf, t]) 
-        translate([-12, 0])
-        linear_extrude(1)
-        polygon([[2,0/*1:0,0,0,0*/] ,[3.07,0] ,[4.08,0] ,[5.13,0] ,[6.32,0] ,[7.36,0] ,[8.47,0] ,[9.62,0] ,[10.8,0] ,[12,0] ,[13.2,0] ,[14.38,0] ,[15.53,0] ,[16.64,0] ,[17.68,0] ,[18.88,0] ,[19.92,0] ,[20.93,0] ,[21.95,0],[22,0/*1:0,0,0,0*/] ,[21.5,0.87] ,[20.97,1.87] ,[20.53,2.77] ,[20.07,3.81] ,[19.6,4.96] ,[19.25,5.95] ,[18.92,6.99] ,[18.63,8.07] ,[18.39,9.18] ,[18.21,10.31] ,[18.11,11.45] ,[18.1,12.58] ,[18.19,13.71] ,[18.39,14.81] ,[18.72,15.87] ,[19.18,16.9] ,[19.8,17.87] ,[20.58,18.77] ,[21.53,19.6] ,[22.36,20.17] ,[23.31,20.69],[24,21/*1:-12,-5,0,5*/] ,[24,22.09] ,[24,23.16] ,[24,24.19],[24,25/*1:0,0,0,0*/] ,[22.9,25.16] ,[21.78,25.3] ,[20.71,25.42] ,[19.68,25.52] ,[18.54,25.61] ,[17.29,25.7] ,[16.23,25.76] ,[15.11,25.82] ,[13.93,25.86] ,[12.71,25.88] ,[11.45,25.89] ,[10.15,25.88] ,[8.81,25.84] ,[7.79,25.8] ,[6.76,25.75] ,[5.71,25.68] ,[4.65,25.59] ,[3.59,25.49] ,[2.52,25.36] ,[1.44,25.22] ,[0.36,25.06],[0,25/*1:12,2,0,-2*/] ,[0,23.99] ,[0,22.92] ,[0,21.82],[0,21/*1:0,5,12,-5*/] ,[1.02,20.52] ,[1.93,19.99] ,[2.97,19.2] ,[3.83,18.33] ,[4.53,17.39] ,[5.07,16.39] ,[5.46,15.34] ,[5.72,14.26] ,[5.87,13.15] ,[5.91,12.02] ,[5.85,10.88] ,[5.71,9.75] ,[5.5,8.63] ,[5.23,7.53] ,[4.92,6.47] ,[4.58,5.45] ,[4.21,4.49] ,[3.74,3.38] ,[3.29,2.39] ,[2.79,1.4] ,[2.27,0.45]]);
-        }
-        
     }
+}
+
+        
+module rear_wall_polygon(height=1, offset=0) {
+    h = rear_wall_height;
+    w = rear_wall_width;
+    t = rear_wall_thickness;
+    
+    hf = h / 32;
+    wf = w / 24;
+    
+    // 24x32
+    scale([1, 1, t]) 
+    translate([-12, 0])
+    linear_extrude(height)
+    offset(r=offset)
+    scale([wf, hf])
+    polygon([[2,0/*1:0,0,0,0*/] ,[3.07,0] ,[4.08,0] ,[5.13,0] ,[6.32,0] ,[7.36,0] ,[8.47,0] ,[9.62,0] ,[10.8,0] ,[12,0] ,[13.2,0] ,[14.38,0] ,[15.53,0] ,[16.64,0] ,[17.68,0] ,[18.88,0] ,[19.92,0] ,[20.93,0] ,[21.95,0],[22,0/*1:0,0,0,0*/] ,[21.5,0.87] ,[20.97,1.87] ,[20.53,2.77] ,[20.07,3.81] ,[19.6,4.96] ,[19.25,5.95] ,[18.92,6.99] ,[18.63,8.07] ,[18.39,9.18] ,[18.21,10.31] ,[18.11,11.45] ,[18.1,12.58] ,[18.19,13.71] ,[18.39,14.81] ,[18.72,15.87] ,[19.18,16.9] ,[19.8,17.87] ,[20.58,18.77] ,[21.53,19.6] ,[22.36,20.17] ,[23.31,20.69],[24,21/*1:-12,-5,0,5*/] ,[24,22.09] ,[24,23.16] ,[24,24.19],[24,25/*1:0,0,0,0*/] ,[22.9,25.16] ,[21.78,25.3] ,[20.71,25.42] ,[19.68,25.52] ,[18.54,25.61] ,[17.29,25.7] ,[16.23,25.76] ,[15.11,25.82] ,[13.93,25.86] ,[12.71,25.88] ,[11.45,25.89] ,[10.15,25.88] ,[8.81,25.84] ,[7.79,25.8] ,[6.76,25.75] ,[5.71,25.68] ,[4.65,25.59] ,[3.59,25.49] ,[2.52,25.36] ,[1.44,25.22] ,[0.36,25.06],[0,25/*1:12,2,0,-2*/] ,[0,23.99] ,[0,22.92] ,[0,21.82],[0,21/*1:0,5,12,-5*/] ,[1.02,20.52] ,[1.93,19.99] ,[2.97,19.2] ,[3.83,18.33] ,[4.53,17.39] ,[5.07,16.39] ,[5.46,15.34] ,[5.72,14.26] ,[5.87,13.15] ,[5.91,12.02] ,[5.85,10.88] ,[5.71,9.75] ,[5.5,8.63] ,[5.23,7.53] ,[4.92,6.47] ,[4.58,5.45] ,[4.21,4.49] ,[3.74,3.38] ,[3.29,2.39] ,[2.79,1.4] ,[2.27,0.45]]);
 }
 
 
@@ -414,6 +415,37 @@ module container() {
     // translate([0, 0, h]) cylinder(h, r2, r2);
 }
 
+module back_cover() {
+    h = 5;
+    d = 8; // offset from original
+    
+    t = 1.2;
+    difference() {
+        rear_wall_polygon(h, -d);
+        translate([0, 0, t]) rear_wall_polygon(h,-d-t);
+        translate([36, 80]) window(); // Somewhat tricky to line this up
+        
+        translate([x - 10, y - 3, 15]) rotate([-90, 0]) cylinder(20, r=3);
+        translate([10, y - 3, 15]) rotate([-90, 0]) cylinder(20, r=3);
+        translate([x/2, 0, 15]) rotate([-90, 0]) cylinder(20, r=3);
+    }
+    
+    x = 102;
+    y = 186;
+    a = 20;
+    
+    translate([a, d+t, 5]) screw_bracket();
+    translate([x - a, d+t, 5]) screw_bracket();
+    translate([a, y+d+t - 7, 5]) rotate([0,0,180 + 5]) screw_bracket();
+    translate([x - a, y+d+t - 7, 5])  rotate([0,0,180 - 5]) screw_bracket();
+    
+    
+    
+    module window() {
+        cube([11, 22, t]);
+    }
+}
+
 
 module solenoid_funnel() {
     h = 15;
@@ -441,16 +473,18 @@ module standoffs(h, w, d, r) {
     translate([-w+r, -d+r]) cylinder(h, r, r);
 }
 
-module screw_brackets(h, w, d) {
-    translate([w, d]) rotate([180, 180]) screw_bracket();
-    translate([w, -d]) screw_bracket();
-    translate([-w, d]) rotate([180, 180]) screw_bracket();
-    translate([-w, -d]) screw_bracket();
-}
-
 module screw_bracket() {
     w = 1;
-    scale(15) translate([w/2, 0, w]) rotate([0, 90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
+    s = 10;
+    o = 0;
+    t = 1.2;
+    
+    
+    translate([0,0,s]) rotate([0, 180]) difference() {
+        scale(s) translate([w/2, 0, w]) rotate([0, 90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
+        translate([0, -t, t]) scale([s-t*2, s, s]) translate([w/2, 0, w]) rotate([0, 90, 180]) linear_extrude(w) polygon([[0,0],[1,0],[1,1]]);
+        translate([0, -s/2 + o]) cylinder(15, r=1);
+    }
 }
 
 // Helps to separate the PCB from the shell
