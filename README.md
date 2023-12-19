@@ -2,6 +2,9 @@
 
 An open-source experiment in carbon removal based on the electrochemical pH swing of seawater.
 
+[![DOI](https://zenodo.org/badge/686062718.svg)](https://zenodo.org/doi/10.5281/zenodo.10403598)
+
+
 ![Synthwave Image](synthwave.jpg)
 
 Developed by Alex Ose with input from many wonderful collaborators via the
