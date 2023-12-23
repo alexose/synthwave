@@ -27,6 +27,11 @@
 const char *ssid = "Thompson Creek Yacht Club";
 const char *password = "winecountry";
 
+// Choose whether you want to enable data logging, and if so, where you want to send the data.
+// This must be an influxdb server, either hosted locally on your network or via Influx Cloud.
+const bool DISABLE_LOGGING = false;
+const char *influxdb_url = "http://192.168.1.42:8086/"
+
 volatile bool startFilling = false;
 
 AsyncWebServer server(80);
