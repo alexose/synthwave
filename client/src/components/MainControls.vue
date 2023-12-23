@@ -18,6 +18,23 @@
     export default {
         name: "MainControls",
         methods: {
+            fetchStatus() {
+                // Replace with your API call logic
+                fetch("/api/status")
+                    .then(response => response.json())
+                    .then(data => {
+                        this.status = data;
+                    })
+                    .catch(error => {
+                        console.error("Error fetching status:", error);
+                    });
+            },
+            startPolling() {
+                this.intervalId = setInterval(this.fetchStatus, 1000);
+            },
+            stopPolling() {
+                clearInterval(this.intervalId);
+            },
             activate: async function (device) {
                 this.status[device.key] = "running";
                 let params = {};
@@ -47,8 +64,15 @@
                 }
             },
         },
+        mounted() {
+            this.startPolling();
+        },
+        beforeUnmount() {
+            this.stopPolling();
+        },
         data() {
             return {
+                intervalId: null,
                 status: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 devices: [
                     {

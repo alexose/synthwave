@@ -19,8 +19,15 @@
 #define DEVICE_RELEASE1 45
 #define DEVICE_RELEASE2 42
 
-const char *ssid = "YOUR_SSID";
-const char *password = "YOUR_PASSWORD";
+#define DEVICE_FLOAT1 26
+#define DEVICE_FLOAT2 39
+
+// const char *ssid = "YOUR_SSID";
+// const char *password = "YOUR_PASSWORD";
+const char *ssid = "Thompson Creek Yacht Club";
+const char *password = "winecountry";
+
+volatile bool startFilling = false;
 
 AsyncWebServer server(80);
 
@@ -35,7 +42,7 @@ void setup(void) {
   Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
 
-  // Initialize pins as OUTPUT
+  // Initialize output pins as OUTPUT
   digitalWrite(DEVICE_PUMP1, LOW);
   pinMode(DEVICE_PUMP1, OUTPUT);
   digitalWrite(DEVICE_PUMP2, LOW);
@@ -56,6 +63,12 @@ void setup(void) {
   pinMode(DEVICE_RELEASE1, OUTPUT);
   digitalWrite(DEVICE_RELEASE2, LOW);
   pinMode(DEVICE_RELEASE2, OUTPUT);
+
+  // Initialize input pins as INPUT_PULLUP, set interrupts
+  pinMode(DEVICE_FLOAT1, INPUT_PULLUP);
+  pinMode(DEVICE_FLOAT2, INPUT_PULLUP);
+  // attachInterrupt(digitalPinToInterrupt(FLOAT1), handleFloat1Interrupt, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(FLOAT2), handleFloat2Interrupt, CHANGE);
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -106,16 +119,16 @@ void setup(void) {
   server.on("/api/device/pump2", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("PUMP2", request);
   });
-  server.on("/api/device/VALVE1", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/api/device/valve1", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("VALVE1", request);
   });
-  server.on("/api/device/VALVE2", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/api/device/valve2", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("VALVE2", request);
   });
-  server.on("/api/device/VALVE3", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/api/device/valve3", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("VALVE3", request);
   });
-  server.on("/api/device/VALVE4", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/api/device/valve4", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("VALVE4", request);
   });
   server.on("/api/device/release1", HTTP_POST, [](AsyncWebServerRequest *request) {
@@ -123,6 +136,36 @@ void setup(void) {
   });
   server.on("/api/device/release2", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("RELEASE2", request);
+  });
+
+  server.on("/api/routine/fill1", HTTP_POST, [](AsyncWebServerRequest *request) {
+    display("Filling 1...");
+    everythingOff();
+    digitalWrite(DEVICE_VALVE3, HIGH);
+    digitalWrite(DEVICE_PUMP1, HIGH);
+
+    // Set a flag to start the filling process
+    startFilling = true;
+
+    // Immediately return status
+    getStatus(request);
+  });
+
+  server.on("/api/routine/fill2", HTTP_POST, [](AsyncWebServerRequest *request) {
+    display("Filling 2...");
+    everythingOff();
+    digitalWrite(DEVICE_VALVE1, HIGH);
+    digitalWrite(DEVICE_PUMP2, HIGH);
+
+    // Set a flag to start the filling process
+    startFilling = true;
+
+    // Immediately return status
+    getStatus(request);
+  });
+
+  server.on("/api/device/fill2", HTTP_POST, [](AsyncWebServerRequest *request) {
+    toggleDevice("RELEASE1", request);
   });
 
   server.onNotFound([](AsyncWebServerRequest *request) {
@@ -141,6 +184,19 @@ void setup(void) {
 
   server.begin();
   Serial.println("HTTP server started");
+}
+
+void everythingOff() {
+  digitalWrite(DEVICE_PUMP1, LOW);
+  digitalWrite(DEVICE_PUMP2, LOW);
+  digitalWrite(DEVICE_VAC1, LOW);
+  digitalWrite(DEVICE_VAC2, LOW);
+  digitalWrite(DEVICE_VALVE1, LOW);
+  digitalWrite(DEVICE_VALVE2, LOW);
+  digitalWrite(DEVICE_VALVE3, LOW);
+  digitalWrite(DEVICE_VALVE4, LOW);
+  digitalWrite(DEVICE_RELEASE1, LOW);
+  digitalWrite(DEVICE_RELEASE2, LOW);
 }
 
 void toggleDevice(const String &deviceName, AsyncWebServerRequest *request) {
@@ -164,11 +220,14 @@ void toggleDevice(const String &deviceName, AsyncWebServerRequest *request) {
     output = output + " " + "off";
   }
 
-  Heltec.display->clear();
-  Heltec.display->drawString(0, 10, output);
-  Heltec.display->display();
-
+  display(output);
   getStatus(request);
+}
+
+void display(String message){
+  Heltec.display->clear();
+  Heltec.display->drawString(0, 10, message);
+  Heltec.display->display();
 }
 
 void getStatus(AsyncWebServerRequest *request) {
@@ -207,6 +266,14 @@ int getDevicePin(const String &deviceName) {
   return -1;  // Invalid device name
 }
 
-
 void loop(void) {
+  if (startFilling) {
+    if (digitalRead(DEVICE_FLOAT2) == HIGH || digitalRead(DEVICE_FLOAT1) == HIGH){ 
+       startFilling = false;
+       everythingOff();
+       display("Filled!");
+    } else {
+      //nothin
+    }
+  }
 }

@@ -1,2 +1,4 @@
 node_modules
+pcb/Synthwave-backups
+client/dist/
 .DS_STORE
