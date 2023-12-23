@@ -24,11 +24,11 @@ default_screw_radius = 1;
 
 $fn = 50;
 
-render_base = 0;
+render_base = 1;
 render_base_no_lid = 0;
 render_electrode_holder = 0;
 render_pump_bracket = 0;
-render_container_cover = 1;
+render_container_cover = 0;
 render_back_cover = 0;
 render_standoffs = 0;
 
@@ -208,11 +208,12 @@ module shelf(makeSquare=false, extraHoles=false) {
 module shelf_brackets() {
     d = 67;
 
-    translate([d, -2]) rotate([0, 0, 270]) shelf_bracket();
-    mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) shelf_bracket();
+    translate([d, -2]) rotate([0, 0, 270]) vac_shelf_bracket();
+    // mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) valve_shelf_bracket();
+    mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) vac_shelf_bracket();
 }
 
-module shelf_bracket() {
+module vac_shelf_bracket() {
     t = 2;
     h = 40;
     w = 67;
@@ -222,10 +223,26 @@ module shelf_bracket() {
     
     difference() {
         hull() {
-            translate([o - 0.7, -d/2 + 3, h]) scale(1.06) vac_footprint(v);
+            translate([o - 0.7, -d/2 + 3, h]) scale(1.06)  vac_footprint(v);
             sphere(t);
         }
         translate([o + 0.6, -d/2 + 3, h+1]) vac_footprint(v);
+    }
+}
+
+module valve_shelf_bracket() {
+    t = 2;
+    h = 40;
+    w = 67;
+    d = 10;
+    o = -5;
+    
+    difference() {
+        hull() {
+            translate([o - 0.7, -d/2 + 3, h]) scale(1.06) valve_footprint(1);
+            sphere(t);
+        }
+        translate([o + 15, -d/2 + 3, h]) rotate([0, 0, 0]) three_way_valve_mount();
     }
 }
 
@@ -242,6 +259,19 @@ module vac_footprint(h) {
     }
 }
 
+
+module valve_footprint(h) {
+    x = 39;
+    y = 50;
+    z = h;
+    r = 10;
+    
+    rotate([0, 0, 90]) translate([-x/2, -y+r*2]) hull() {
+        cube([x, y-r, z]);
+        translate([x-r, 0]) cylinder(z, r=r);
+        translate([r, 0]) cylinder(z, r=r);
+    }
+}
 module container_cover() {
 
     container_top_upper_radius = 109 / 2;
@@ -266,8 +296,10 @@ module container_cover() {
             union() {
                 holes(1.2);
                 half();
+                translate([r1 + 30, 20]) cylinder(10, r=6);
             }
             scale([1, 1, 2]) holes();
+            translate([r1 + 30, 20]) ScrewThread(10, 10);
         }
     }
     
@@ -287,8 +319,8 @@ module container_cover() {
         h = 10;
         
         o = r1 + d/2;
-        translate([o + 30, 20, 1]) cylinder(h, r=14.5/2 + t, $fn=6); // switch holder
-        translate([o + 30, 20]) cylinder(h, r=8.5/2 + t, $fn=80); // switch holder
+        // translate([o + 30, 20, 1]) cylinder(h, r=14.5/2 + t, $fn=6); // switch holder
+        // translate([o + 30, 20]) cylinder(h, r=8.5/2 + t, $fn=80); // switch holder
         translate([o + 30, -20]) cylinder(h, r=13/2 + t, $fn=80); // pH probe holder
         
         $fn = 20;
