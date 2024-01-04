@@ -169,9 +169,11 @@ void setup(void) {
     getStatus(request);
   });
 
-  server.on("/api/device/fill2", HTTP_POST, [](AsyncWebServerRequest *request) {
-    toggleDevice("RELEASE1", request);
-  });
+  // TODO: decide if we want to read these directly
+  server.on("/api/sensor/ph1", HTTP_POST, [](AsyncWebServerRequest *request) {
+    float result = readPH(PH1);
+    request->send(400, "text/plain", "Invalid device name: " + deviceName);
+  }
 
   server.onNotFound([](AsyncWebServerRequest *request) {
     if (request->method() == HTTP_OPTIONS) {
@@ -270,6 +272,16 @@ int getDevicePin(const String &deviceName) {
 
   return -1;  // Invalid device name
 }
+
+void readPH(const String &deviceName) {
+
+}
+
+void readCO2() {
+
+}
+
+void 
 
 void loop(void) {
   if (startFilling) {

@@ -288,20 +288,24 @@ module container_cover() {
     a = r1*2 + d/2 + r3 + 8;
     t = 1.2;
     
+    fh = 15; // float sensor height, adjust this if you want different water levels
+    
     cover();
-    // mirror([1, 0, 0]) cover();
+    mirror([1, 0, 0]) cover();
     
     module cover() {
         difference() {
             union() {
                 holes(1.2);
                 half();
-                translate([r1 + 30, 20]) cylinder(10, r=6);
+                translate([r1 + 30, 20]) cylinder(15, r=6);
             }
             scale([1, 1, 2]) holes();
-            translate([r1 + 30, 20]) ScrewThread(10, 10);
+            translate([r1 + 30, 20]) ScrewThread(8.6, 15, 1.1);
         }
     }
+    
+    
     
     module half() {
         difference() {
