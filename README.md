@@ -4,7 +4,6 @@ An open-source experiment in carbon removal based on the electrochemical pH swin
 
 [![DOI](https://zenodo.org/badge/686062718.svg)](https://zenodo.org/doi/10.5281/zenodo.10403598)
 
-
 ![Synthwave Image](synthwave.jpg)
 
 Developed by Alex Ose with input from many wonderful collaborators via the
@@ -92,6 +91,7 @@ With improved electrodes, the next step would be to improve the throughput of th
 This could be achieved by increasing the size of the system, designing a more efficient cell (ideally a flow cell), or
 perhaps building multiple machines to work in parallel with one another.
 
-We hope that by publishing this work under the MIT license, future hackers and collaborators will share their learnings.
-It is only by the overwhelming success of carbon capture do we hope to maintain a livable climate. By investing your
-time and energy in projects like this one, we may uncover key techniques that make gigaton-scale carbon capture viable.
+We hope that by publishing this work under the CERN license, future hackers and collaborators will share their
+learnings. It is only by the overwhelming success of carbon capture do we hope to maintain a livable climate. By
+investing your time and energy in projects like this one, we may uncover key techniques that make gigaton-scale carbon
+capture viable.
