@@ -60,6 +60,10 @@ this is a good opportunity to learn!
     [LM2596S Adjustable Buck Converter](https://www.amazon.com/DiGiYes-Converter-Efficiency-Regulator-Adjustable/dp/B0BPSFVDY4)
     $8.69 (5 pack)
 
+## PCB
+
+## Electrode Materials
+
 ## Misc.
 
 -   20 [2.2kohm 1/4 watt resistors](https://www.amazon.com/dp/B08QRPRVMJ) (used as hardware pulldowns) $5.49 (100 pack)

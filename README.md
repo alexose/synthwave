@@ -71,13 +71,16 @@ require a physical connection to the device.
 
 ## System modeling
 
-Our current estimates show that Synthwave removes a maximum of 0.25g of CO2 per run cycle. Assuming a cycle time of five
-minutes, an unlimited source of seawater, and non-degrading electrodes, it should be able to remove 72g of CO2 per day.
+Our current estimates show that Synthwave removes about of 0.076g of CO2 per run cycle[1]. Assuming a cycle time of five
+minutes, an unlimited source of seawater, and non-degrading electrodes, it should be able to remove 22g of CO2 per day.
 
 There are many, many variables that will affect this final number: The quality of the electrodes, the concentration of
 CO2 in the seawater, the cycle frequency, and the efficiency of our electrochemical reaction.
 
 Above all else, Synthwave aims to put our assumptions to the test, and help inform our next phase of research.
+
+[1]: The original paper cites 0.0543 mmol of CO2 removed per cycle, with water volumes of about 30mL. Scaling this up to
+1L gives us 1.7404 mmol, or 0.0766 grams of CO2.
 
 ## Future research
 
