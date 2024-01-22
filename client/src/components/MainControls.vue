@@ -3,7 +3,7 @@
         <h1>Synthwave</h1>
     </div>
 
-    <span>Current Status: {{ currentStatus }}</span>
+    <span>Current Status: {{ getRoutineName(currentRoutine) }}</span>
 
     <div class="single-device">
         <div class="device">Begin Cycle</div>
@@ -19,8 +19,8 @@
             <div
                 v-for="(routine, idx) in routines"
                 :key="'routine-' + idx"
-                :class="['device', status[idx] ? 'active' : null]"
-                @click="activate(routine)"
+                :class="['device', currentRoutine == routine.key ? 'active' : null, routine.class || null]"
+                @click="activateRoutine(routine)"
             >
                 {{ routine.name }}
             </div>
@@ -37,8 +37,13 @@
             <div
                 v-for="(device, idx) in devices"
                 :key="'device-' + idx"
-                :class="['device', status[idx] ? 'active' : null]"
-                @click="activate(device)"
+                :class="[
+                    'device',
+                    status[idx] ? 'active' : null,
+                    device.disabled ? 'disabled' : null,
+                    device.class ? device.class : null,
+                ]"
+                @click="device.disabled ? null : activateDevice(device)"
             >
                 {{ device.name }}
             </div>
@@ -55,6 +60,7 @@
                 fetch("/api/status")
                     .then(response => response.json())
                     .then(data => {
+                        this.currentRoutine = data.shift();
                         this.status = data;
                     })
                     .catch(error => {
@@ -67,7 +73,19 @@
             stopPolling() {
                 clearInterval(this.intervalId);
             },
-            activate: async function (device) {
+            getRoutineName: function (key) {
+                return this.routines.find(routine => routine.key == key)?.name || "Idle";
+            },
+            activateRoutine: async function (routine) {
+                this.status[routine.key] = "running";
+                let params = {};
+
+                const url = new URL(`/api/routine/${routine.key.toLowerCase()}`, window.location.origin);
+                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+                this.fetch(url);
+            },
+
+            activateDevice: async function (device) {
                 this.status[device.key] = "running";
                 let params = {};
 
@@ -79,7 +97,9 @@
 
                 const url = new URL(`/api/device/${device.key.toLowerCase()}`, window.location.origin);
                 Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
+                this.fetch(url);
+            },
+            fetch: async function (url) {
                 try {
                     let response = await fetch(url, {
                         method: "POST",
@@ -105,7 +125,7 @@
         data() {
             return {
                 intervalId: null,
-                currentStatus: "Idle",
+                currentRoutine: "Idle",
                 status: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 routines: [
                     {
@@ -139,6 +159,22 @@
                     {
                         name: "Drain Right",
                         key: "DRAIN2",
+                    },
+                    {
+                        name: "Run Left Electrodes",
+                        key: "ELECTRODE1",
+                    },
+                    {
+                        name: "Run Right Electrodes",
+                        key: "ELECTRODE2",
+                    },
+                    {
+                        name: "Reverse Left Electrodes",
+                        key: "ELECTRODE1_REVERSE",
+                    },
+                    {
+                        name: "Reverse Right Electrodes",
+                        key: "ELECTRODE2_REVERSE",
                     },
                 ],
                 devices: [
@@ -186,6 +222,16 @@
                         name: "Release 2",
                         key: "RELEASE2",
                     },
+                    {
+                        name: "Float 1",
+                        key: "FLOAT1",
+                        disabled: true,
+                    },
+                    {
+                        name: "Float 2",
+                        key: "FLOAT2",
+                        disabled: true,
+                    },
                 ],
             };
         },
@@ -217,6 +263,10 @@
 
     .device.active {
         background: #eee;
+    }
+
+    .device.disabled {
+        cursor: auto;
     }
 
     .divider {

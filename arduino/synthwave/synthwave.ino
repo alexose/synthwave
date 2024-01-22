@@ -18,9 +18,8 @@
 #define DEVICE_VALVE4 46
 #define DEVICE_RELEASE1 45
 #define DEVICE_RELEASE2 42
-
-#define DEVICE_FLOAT1 26
-#define DEVICE_FLOAT2 39
+#define DEVICE_FLOAT1 39
+#define DEVICE_FLOAT2 26 // In theory, pin 26 can mess with WiFi.  But it's been ok in my experience.
 
 // const char *ssid = "YOUR_SSID";
 // const char *password = "YOUR_PASSWORD";
@@ -30,9 +29,11 @@ const char *password = "winecountry";
 // Choose whether you want to enable data logging, and if so, where you want to send the data.
 // This must be an influxdb server, either hosted locally on your network or via Influx Cloud.
 const bool DISABLE_LOGGING = false;
-const char *influxdb_url = "http://192.168.1.42:8086/"
+const char *influxdb_url = "http://192.168.1.42:8086/";
 
 volatile bool startFilling = false;
+String currentRoutine = "idle";
+String currentStatus = "";
 
 AsyncWebServer server(80);
 
@@ -69,12 +70,10 @@ void setup(void) {
   digitalWrite(DEVICE_RELEASE2, LOW);
   pinMode(DEVICE_RELEASE2, OUTPUT);
 
-  // Initialize input pins as INPUT_PULLUP, set interrupts
+  // Initialize input pins
   pinMode(DEVICE_FLOAT1, INPUT_PULLUP);
-  pinMode(DEVICE_FLOAT2, INPUT_PULLUP);
-  // attachInterrupt(digitalPinToInterrupt(FLOAT1), handleFloat1Interrupt, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(FLOAT2), handleFloat2Interrupt, CHANGE);
-
+  pinMode(DEVICE_FLOAT2, INPUT); // Surprise! Pin 39 needs a hardware pulldown.
+ 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -102,16 +101,13 @@ void setup(void) {
 
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
-  /*
-  // Route for root / web page
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", "text/html", false);
-  });
-  */
-
+  // Status endpoint
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request) {
     getStatus(request);
   });
+
+  // Individual device endpoints.  These probably shouldn't be available to the network,
+  // although they can be useful for debugging.
   server.on("/api/device/vac1", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("VAC1", request);
   });
@@ -143,37 +139,44 @@ void setup(void) {
     toggleDevice("RELEASE2", request);
   });
 
+  // Routines
   server.on("/api/routine/fill1", HTTP_POST, [](AsyncWebServerRequest *request) {
-    display("Filling 1...");
-    everythingOff();
-    digitalWrite(DEVICE_VALVE3, HIGH);
-    digitalWrite(DEVICE_PUMP1, HIGH);
-
-    // Set a flag to start the filling process
-    startFilling = true;
-
-    // Immediately return status
+    currentRoutine = "FILL1";
     getStatus(request);
   });
 
   server.on("/api/routine/fill2", HTTP_POST, [](AsyncWebServerRequest *request) {
-    display("Filling 2...");
-    everythingOff();
-    digitalWrite(DEVICE_VALVE1, HIGH);
-    digitalWrite(DEVICE_PUMP2, HIGH);
+    currentRoutine = "FILL2";
+    getStatus(request);
+  });
 
-    // Set a flag to start the filling process
-    startFilling = true;
+  server.on("/api/routine/electrode1", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODE1";
+    getStatus(request);
+  });
 
-    // Immediately return status
+  server.on("/api/routine/electrode1_reverse", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODE1_REVERSE";
+    getStatus(request);
+  });
+
+  server.on("/api/routine/electrode2", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODE2";
+    getStatus(request);
+  });
+
+  server.on("/api/routine/electrode2_reverse", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODE2_REVERSE";
     getStatus(request);
   });
 
   // TODO: decide if we want to read these directly
+  /*
   server.on("/api/sensor/ph1", HTTP_POST, [](AsyncWebServerRequest *request) {
     float result = readPH(PH1);
     request->send(400, "text/plain", "Invalid device name: " + deviceName);
   }
+  */
 
   server.onNotFound([](AsyncWebServerRequest *request) {
     if (request->method() == HTTP_OPTIONS) {
@@ -238,24 +241,12 @@ void display(String message){
 }
 
 void getStatus(AsyncWebServerRequest *request) {
-  String results = "[";
-  results += String(digitalRead(DEVICE_PUMP1)) + ",";
-  results += String(digitalRead(DEVICE_PUMP2)) + ",";
-  results += String(digitalRead(DEVICE_VAC1)) + ",";
-  results += String(digitalRead(DEVICE_VAC2)) + ",";
-  results += String(digitalRead(DEVICE_VALVE1)) + ",";
-  results += String(digitalRead(DEVICE_VALVE2)) + ",";
-  results += String(digitalRead(DEVICE_VALVE3)) + ",";
-  results += String(digitalRead(DEVICE_VALVE4)) + ",";
-  results += String(digitalRead(DEVICE_RELEASE1)) + ",";
-  results += String(digitalRead(DEVICE_RELEASE2));
-  results += "]";
 
   //AsyncResponseStream *response = request->beginResponseStream("application/json");
   //response->addHeader("Access-Control-Allow-Origin", "*");
   //response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   //response->print(results);
-  request->send(200, "text/plain", results);
+  request->send(200, "text/plain", currentStatus);
 }
 
 int getDevicePin(const String &deviceName) {
@@ -273,6 +264,7 @@ int getDevicePin(const String &deviceName) {
   return -1;  // Invalid device name
 }
 
+
 void readPH(const String &deviceName) {
 
 }
@@ -281,16 +273,54 @@ void readCO2() {
 
 }
 
-void 
-
 void loop(void) {
-  if (startFilling) {
-    if (digitalRead(DEVICE_FLOAT2) == HIGH || digitalRead(DEVICE_FLOAT1) == HIGH){ 
-       startFilling = false;
+  if (currentRoutine == "FILL1") {
+    if (digitalRead(DEVICE_FLOAT1) == HIGH){
+       currentRoutine = "idle";
        everythingOff();
        display("Filled!");
+    } else if (digitalRead(DEVICE_VALVE3) == HIGH) {
+      // Ensure VALVE3 is open before running pump
+      digitalWrite(DEVICE_PUMP1, HIGH);
     } else {
-      //nothin
+      digitalWrite(DEVICE_VALVE3, HIGH);
     }
   }
+
+  if (currentRoutine == "FILL2") {
+    if (digitalRead(DEVICE_FLOAT2) == HIGH){
+       currentRoutine = "idle";
+       everythingOff();
+       display("Filled!");
+    } else if (digitalRead(DEVICE_VALVE1) == HIGH) {
+      // Ensure VALVE1 is open before running pump
+      digitalWrite(DEVICE_PUMP2, HIGH);
+    } else {
+      digitalWrite(DEVICE_VALVE1, HIGH);
+    }
+  }
+
+  delay(20);
+
+  // Constantly read all the pins
+  // TODO: decide if this is dumb
+  String status = "[";
+  status += "\"" + currentRoutine + "\""",";
+  status += String(digitalRead(DEVICE_PUMP1)) + ",";
+  status += String(digitalRead(DEVICE_PUMP2)) + ",";
+  status += String(digitalRead(DEVICE_VAC1)) + ",";
+  status += String(digitalRead(DEVICE_VAC2)) + ",";
+  status += String(digitalRead(DEVICE_VALVE1)) + ",";
+  status += String(digitalRead(DEVICE_VALVE2)) + ",";
+  status += String(digitalRead(DEVICE_VALVE3)) + ",";
+  status += String(digitalRead(DEVICE_VALVE4)) + ",";
+  status += String(digitalRead(DEVICE_RELEASE1)) + ",";
+  status += String(digitalRead(DEVICE_RELEASE2)) + ",";
+  status += String(digitalRead(DEVICE_FLOAT1)) + ",";
+  status += String(digitalRead(DEVICE_FLOAT2));
+  status += "]";
+
+  currentStatus = status;
+
+  delay(200);
 }
