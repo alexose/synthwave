@@ -7,6 +7,7 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include "heltec.h"
+#include "scd30_modbus.h"
 
 #define DEVICE_PUMP1 7
 #define DEVICE_PUMP2 6
@@ -18,11 +19,17 @@
 #define DEVICE_VALVE4 46
 #define DEVICE_RELEASE1 45
 #define DEVICE_RELEASE2 42
+#define DEVICE_ELECTRODE1 40
+#define DEVICE_ELECTRODE2 41
 
 #define SENSOR_FLOAT1 39
 #define SENSOR_FLOAT2 20
 #define SENSOR_PH1 3
 #define SENSOR_PH2 4
+SCD30_Modbus scd30;
+
+static const uint8_t SDA  = 1;
+static const uint8_t SCL  = 2;
 
 // const char *ssid = "YOUR_SSID";
 // const char *password = "YOUR_PASSWORD";
@@ -45,11 +52,25 @@ void setup(void) {
   delay(100);
   Heltec.display->clear();
 
-  Serial.begin(115200);
+  // Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("");
+  // Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
+
+  // Initialize serial
+  Serial1.begin(19200, SERIAL_8N1, 2, 1);
+
+  // Initialize sensor
+  scd30.begin(&Serial1, 19200);
+
+  delay(100);
+  scd30.setMeasurementInterval(10);
+
+  delay(1000);
+
+  display(String(scd30.getMeasurementInterval()));
+  delay(2000);
 
   // Initialize output pins as OUTPUT
   digitalWrite(DEVICE_PUMP1, LOW);
@@ -73,6 +94,11 @@ void setup(void) {
   digitalWrite(DEVICE_RELEASE2, LOW);
   pinMode(DEVICE_RELEASE2, OUTPUT);
 
+  digitalWrite(DEVICE_ELECTRODE1, LOW);
+  pinMode(DEVICE_ELECTRODE1, OUTPUT);
+  digitalWrite(DEVICE_ELECTRODE2, LOW);
+  pinMode(DEVICE_ELECTRODE2, OUTPUT);
+
   // Initialize input pins
   pinMode(SENSOR_FLOAT1, INPUT); // Surprise! Pin 39 needs a hardware pullup.
   pinMode(SENSOR_FLOAT2, INPUT_PULLUP); 
@@ -80,25 +106,27 @@ void setup(void) {
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    // Serial.print(".");
     Heltec.display->drawString(0, 10, "Connecting...");
     Heltec.display->display();
   }
 
   delay(2000);
 
+  /*
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  */
 
   Heltec.display->clear();
   Heltec.display->drawString(0, 10, WiFi.localIP().toString());
   Heltec.display->display();
 
   if (!SPIFFS.begin(true)) {
-    Serial.println("An error has occurred while mounting SPIFFS");
+    // Serial.println("An error has occurred while mounting SPIFFS");
     return;
   }
 
@@ -141,6 +169,12 @@ void setup(void) {
   server.on("/api/device/release2", HTTP_POST, [](AsyncWebServerRequest *request) {
     toggleDevice("RELEASE2", request);
   });
+  server.on("/api/device/electrode1", HTTP_POST, [](AsyncWebServerRequest *request) {
+    toggleDevice("ELECTRODE1", request);
+  });
+  server.on("/api/device/electrode2", HTTP_POST, [](AsyncWebServerRequest *request) {
+    toggleDevice("ELECTRODE2", request);
+  });
 
   // Routines
   server.on("/api/routine/fill1", HTTP_POST, [](AsyncWebServerRequest *request) {
@@ -169,23 +203,13 @@ void setup(void) {
     getStatus(request);
   });
 
-  server.on("/api/routine/electrode1", HTTP_POST, [](AsyncWebServerRequest *request) {
-    currentRoutine = "ELECTRODE1";
+  server.on("/api/routine/electrodes_forward", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODES_FORWARDS";
     getStatus(request);
   });
 
-  server.on("/api/routine/electrode1_reverse", HTTP_POST, [](AsyncWebServerRequest *request) {
-    currentRoutine = "ELECTRODE1_REVERSE";
-    getStatus(request);
-  });
-
-  server.on("/api/routine/electrode2", HTTP_POST, [](AsyncWebServerRequest *request) {
-    currentRoutine = "ELECTRODE2";
-    getStatus(request);
-  });
-
-  server.on("/api/routine/electrode2_reverse", HTTP_POST, [](AsyncWebServerRequest *request) {
-    currentRoutine = "ELECTRODE2_REVERSE";
+  server.on("/api/routine/electrodes_backward", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "ELECTRODES_BACKWARDS";
     getStatus(request);
   });
 
@@ -204,7 +228,7 @@ void setup(void) {
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
 
   server.begin();
-  Serial.println("HTTP server started");
+  // Serial.println("HTTP server started");
 }
 
 void everythingOff() {
@@ -218,6 +242,8 @@ void everythingOff() {
   digitalWrite(DEVICE_VALVE4, LOW);
   digitalWrite(DEVICE_RELEASE1, LOW);
   digitalWrite(DEVICE_RELEASE2, LOW);
+  digitalWrite(DEVICE_ELECTRODE1, LOW);
+  digitalWrite(DEVICE_ELECTRODE2, LOW);
 }
 
 void toggleDevice(const String &deviceName, AsyncWebServerRequest *request) {
@@ -272,13 +298,13 @@ int getDevicePin(const String &deviceName) {
   if (deviceName == "VALVE4") return DEVICE_VALVE4;
   if (deviceName == "RELEASE1") return DEVICE_RELEASE1;
   if (deviceName == "RELEASE2") return DEVICE_RELEASE2;
+  if (deviceName == "ELECTRODE1") return DEVICE_ELECTRODE1;
+  if (deviceName == "ELECTRODE2") return DEVICE_ELECTRODE2;
 
   return -1;  // Invalid device name
 }
 
-void readCO2() {
-
-}
+void readCO2() {}
 
 // TODO: decide if this is dumb
 String buildStatusString() {
@@ -295,6 +321,8 @@ String buildStatusString() {
   status += String(digitalRead(DEVICE_VALVE4)) + ",";
   status += String(digitalRead(DEVICE_RELEASE1)) + ",";
   status += String(digitalRead(DEVICE_RELEASE2)) + ",";
+  status += String(digitalRead(DEVICE_ELECTRODE1)) + ",";
+  status += String(digitalRead(DEVICE_ELECTRODE2)) + ",";
   status += String(digitalRead(SENSOR_FLOAT1)) + ",";
   status += String(digitalRead(SENSOR_FLOAT2)) + ",";
   status += String(analogRead(SENSOR_PH1)) + ",";
@@ -365,6 +393,12 @@ void loop(void) {
       delay(100);
       digitalWrite(DEVICE_VALVE3, HIGH);
     }
+  }
+
+  if (scd30.dataReady()){
+      display(String(scd30.CO2));
+  } else {
+      display("nothin");
   }
 
   delay(20);

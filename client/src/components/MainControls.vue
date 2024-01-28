@@ -108,8 +108,8 @@
                 // The timestamp isthe second item
                 this.timestamp = data.shift();
 
-                // Then, the devices are the next 10 items
-                this.deviceStatus = data.splice(0, 10);
+                // Then, the devices are the next 12 items
+                this.deviceStatus = data.splice(0, 12);
 
                 // The sensors are the remaining items
                 this.sensorStatus = data;
@@ -194,20 +194,12 @@
                         key: "DRAIN2",
                     },
                     {
-                        name: "Run Left Electrodes",
-                        key: "ELECTRODE1",
+                        name: "Run Electrodes",
+                        key: "ELECTRODES_FORWARD",
                     },
                     {
-                        name: "Run Right Electrodes",
-                        key: "ELECTRODE2",
-                    },
-                    {
-                        name: "Reverse Left Electrodes",
-                        key: "ELECTRODE1_REVERSE",
-                    },
-                    {
-                        name: "Reverse Right Electrodes",
-                        key: "ELECTRODE2_REVERSE",
+                        name: "Reverse Electrodes",
+                        key: "ELECTRODES_BACKWARDS",
                     },
                 ],
                 devices: [
@@ -254,6 +246,16 @@
                     {
                         name: "Release 2",
                         key: "RELEASE2",
+                    },
+                    {
+                        name: "Electrode 1",
+                        key: "ELECTRODE1",
+                        locking: true,
+                    },
+                    {
+                        name: "Electrode 2",
+                        key: "ELECTRODE2",
+                        locking: true,
                     },
                 ],
                 sensors: [
