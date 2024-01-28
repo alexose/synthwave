@@ -189,14 +189,6 @@ void setup(void) {
     getStatus(request);
   });
 
-  // TODO: decide if we want to read these directly
-  /*
-  server.on("/api/sensor/ph1", HTTP_POST, [](AsyncWebServerRequest *request) {
-    float result = readPH(PH1);
-    request->send(400, "text/plain", "Invalid device name: " + deviceName);
-  }
-  */
-
   server.onNotFound([](AsyncWebServerRequest *request) {
     if (request->method() == HTTP_OPTIONS) {
       request->send(200);
@@ -265,6 +257,7 @@ void getStatus(AsyncWebServerRequest *request) {
   //response->addHeader("Access-Control-Allow-Origin", "*");
   //response->addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   //response->print(results);
+  currentStatus = buildStatusString();
   request->send(200, "text/plain", currentStatus);
 }
 
@@ -283,13 +276,32 @@ int getDevicePin(const String &deviceName) {
   return -1;  // Invalid device name
 }
 
-
-void readPH(const String &deviceName) {
+void readCO2() {
 
 }
 
-void readCO2() {
+// TODO: decide if this is dumb
+String buildStatusString() {
+  String status = "[";
+  status += "\"" + currentRoutine + "\""",";
+  status += String(millis()) + ",";
+  status += String(digitalRead(DEVICE_PUMP1)) + ",";
+  status += String(digitalRead(DEVICE_PUMP2)) + ",";
+  status += String(digitalRead(DEVICE_VAC1)) + ",";
+  status += String(digitalRead(DEVICE_VAC2)) + ",";
+  status += String(digitalRead(DEVICE_VALVE1)) + ",";
+  status += String(digitalRead(DEVICE_VALVE2)) + ",";
+  status += String(digitalRead(DEVICE_VALVE3)) + ",";
+  status += String(digitalRead(DEVICE_VALVE4)) + ",";
+  status += String(digitalRead(DEVICE_RELEASE1)) + ",";
+  status += String(digitalRead(DEVICE_RELEASE2)) + ",";
+  status += String(digitalRead(SENSOR_FLOAT1)) + ",";
+  status += String(digitalRead(SENSOR_FLOAT2)) + ",";
+  status += String(analogRead(SENSOR_PH1)) + ",";
+  status += String(analogRead(SENSOR_PH2));
+  status += "]";
 
+  return status;
 }
 
 void loop(void) {
@@ -356,28 +368,6 @@ void loop(void) {
   }
 
   delay(20);
-
-  // Constantly read all the pins
-  // TODO: decide if this is dumb
-  String status = "[";
-  status += "\"" + currentRoutine + "\""",";
-  status += String(digitalRead(DEVICE_PUMP1)) + ",";
-  status += String(digitalRead(DEVICE_PUMP2)) + ",";
-  status += String(digitalRead(DEVICE_VAC1)) + ",";
-  status += String(digitalRead(DEVICE_VAC2)) + ",";
-  status += String(digitalRead(DEVICE_VALVE1)) + ",";
-  status += String(digitalRead(DEVICE_VALVE2)) + ",";
-  status += String(digitalRead(DEVICE_VALVE3)) + ",";
-  status += String(digitalRead(DEVICE_VALVE4)) + ",";
-  status += String(digitalRead(DEVICE_RELEASE1)) + ",";
-  status += String(digitalRead(DEVICE_RELEASE2)) + ",";
-  status += String(digitalRead(SENSOR_FLOAT1)) + ",";
-  status += String(digitalRead(SENSOR_FLOAT2)) + ",";
-  status += String(analogRead(SENSOR_PH1)) + ",";
-  status += String(analogRead(SENSOR_PH2));
-  status += "]";
-
-  currentStatus = status;
-
+  currentStatus = buildStatusString();
   delay(200);
 }

@@ -20,6 +20,8 @@
         </div>
     </div>
 
+    <span>Timestamp: {{ timestamp }}</span>
+
     <hr class="divider" />
 
     <details class="devices">
@@ -103,6 +105,9 @@
                 // The current routine is the first item in the array
                 this.currentRoutine = data.shift();
 
+                // The timestamp isthe second item
+                this.timestamp = data.shift();
+
                 // Then, the devices are the next 10 items
                 this.deviceStatus = data.splice(0, 10);
 
@@ -154,6 +159,7 @@
                 currentRoutine: "Idle",
                 deviceStatus: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 sensorStatus: [0, 0, 0, 0],
+                timestamp: 0,
                 routines: [
                     {
                         name: "Cycle Left",
@@ -177,7 +183,7 @@
                     },
                     {
                         name: "Transfer Right to Left",
-                        key: "TRANSFER1TO2",
+                        key: "TRANSFER2TO1",
                     },
                     {
                         name: "Drain Left",
