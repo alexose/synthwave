@@ -9,6 +9,17 @@
         <div class="device">Begin Cycle</div>
     </div>
 
+    <div class="sensors">
+        <div
+            v-for="(sensor, idx) in sensors"
+            :key="'sensor-' + idx"
+            :class="['sensor', sensorStatus[idx] ? 'active' : null]"
+        >
+            {{ sensor.name }}
+            <div v-if="sensor.analog">Value: {{ sensorStatus[idx] }}</div>
+        </div>
+    </div>
+
     <hr class="divider" />
 
     <details class="devices">
@@ -39,13 +50,14 @@
                 :key="'device-' + idx"
                 :class="[
                     'device',
-                    status[idx] ? 'active' : null,
+                    deviceStatus[idx] && !device.analog ? 'active' : null,
                     device.disabled ? 'disabled' : null,
                     device.class ? device.class : null,
                 ]"
                 @click="device.disabled ? null : activateDevice(device)"
             >
                 {{ device.name }}
+                <div v-if="device.analog">Value: {{ deviceStatus[idx] }}</div>
             </div>
         </div>
     </details>
@@ -55,20 +67,18 @@
     export default {
         name: "MainControls",
         methods: {
-            fetchStatus() {
-                // Replace with your API call logic
+            updateStatus() {
                 fetch("/api/status")
                     .then(response => response.json())
                     .then(data => {
-                        this.currentRoutine = data.shift();
-                        this.status = data;
+                        this.parseStatus(data);
                     })
                     .catch(error => {
                         console.error("Error fetching status:", error);
                     });
             },
             startPolling() {
-                this.intervalId = setInterval(this.fetchStatus, 1000);
+                this.intervalId = setInterval(this.updateStatus, 1000);
             },
             stopPolling() {
                 clearInterval(this.intervalId);
@@ -77,16 +87,31 @@
                 return this.routines.find(routine => routine.key == key)?.name || "Idle";
             },
             activateRoutine: async function (routine) {
-                this.status[routine.key] = "running";
-                let params = {};
+                // If routine is already active, stop the routine
+                if (this.currentRoutine == routine.key) {
+                    const url = new URL(`/api/routine/stop`, window.location.origin);
+                    this.post(url);
+                    this.currentRoutine = "Idle";
+                } else {
+                    let params = {};
+                    const url = new URL(`/api/routine/${routine.key.toLowerCase()}`, window.location.origin);
+                    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+                    this.post(url);
+                }
+            },
+            parseStatus: function (data) {
+                // The current routine is the first item in the array
+                this.currentRoutine = data.shift();
 
-                const url = new URL(`/api/routine/${routine.key.toLowerCase()}`, window.location.origin);
-                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-                this.fetch(url);
+                // Then, the devices are the next 10 items
+                this.deviceStatus = data.splice(0, 10);
+
+                // The sensors are the remaining items
+                this.sensorStatus = data;
             },
 
             activateDevice: async function (device) {
-                this.status[device.key] = "running";
+                this.deviceStatus[device.key] = "running";
                 let params = {};
 
                 if (device.locking) {
@@ -97,9 +122,10 @@
 
                 const url = new URL(`/api/device/${device.key.toLowerCase()}`, window.location.origin);
                 Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-                this.fetch(url);
+                this.post(url);
             },
-            fetch: async function (url) {
+
+            post: async function (url) {
                 try {
                     let response = await fetch(url, {
                         method: "POST",
@@ -109,8 +135,8 @@
                         body: "",
                     });
 
-                    this.status = await response.json();
-                    console.log(this.status);
+                    const data = await response.json();
+                    this.parseStatus(data);
                 } catch (error) {
                     console.error("Error:", error);
                 }
@@ -126,7 +152,8 @@
             return {
                 intervalId: null,
                 currentRoutine: "Idle",
-                status: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                deviceStatus: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                sensorStatus: [0, 0, 0, 0],
                 routines: [
                     {
                         name: "Cycle Left",
@@ -222,15 +249,25 @@
                         name: "Release 2",
                         key: "RELEASE2",
                     },
+                ],
+                sensors: [
                     {
-                        name: "Float 1",
+                        name: "Left Float",
                         key: "FLOAT1",
-                        disabled: true,
                     },
                     {
-                        name: "Float 2",
+                        name: "Right Float",
                         key: "FLOAT2",
-                        disabled: true,
+                    },
+                    {
+                        name: "Left PH sensor",
+                        key: "PH1",
+                        analog: true,
+                    },
+                    {
+                        name: "Right PH sensor",
+                        key: "PH2",
+                        analog: true,
                     },
                 ],
             };
@@ -273,6 +310,27 @@
         margin: 40px auto;
         max-width: 500px;
         border-top: 1px solid #eee;
+    }
+
+    .sensors {
+        display: grid;
+        max-width: 500px;
+        margin: 20px auto;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, auto);
+        gap: 16px;
+    }
+
+    .sensor {
+        padding: 5px 20px;
+    }
+
+    .sensor {
+        opacity: 0.35;
+    }
+
+    .sensor.active {
+        opacity: 1;
     }
 
     .devices {

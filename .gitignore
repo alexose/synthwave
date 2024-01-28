@@ -1,5 +1,6 @@
 node_modules
 pcb/Synthwave-backups
 client/dist/
-~Synthwave.kicad_sch.lck
+pcb/~Synthwave.kicad_sch.lck
+pcb/~Synthwave.kicad_pcb.lck
 .DS_STORE

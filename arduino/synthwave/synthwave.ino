@@ -18,8 +18,11 @@
 #define DEVICE_VALVE4 46
 #define DEVICE_RELEASE1 45
 #define DEVICE_RELEASE2 42
-#define DEVICE_FLOAT1 39
-#define DEVICE_FLOAT2 26 // In theory, pin 26 can mess with WiFi.  But it's been ok in my experience.
+
+#define SENSOR_FLOAT1 39
+#define SENSOR_FLOAT2 20
+#define SENSOR_PH1 3
+#define SENSOR_PH2 4
 
 // const char *ssid = "YOUR_SSID";
 // const char *password = "YOUR_PASSWORD";
@@ -71,8 +74,8 @@ void setup(void) {
   pinMode(DEVICE_RELEASE2, OUTPUT);
 
   // Initialize input pins
-  pinMode(DEVICE_FLOAT1, INPUT_PULLUP);
-  pinMode(DEVICE_FLOAT2, INPUT); // Surprise! Pin 39 needs a hardware pulldown.
+  pinMode(SENSOR_FLOAT1, INPUT); // Surprise! Pin 39 needs a hardware pullup.
+  pinMode(SENSOR_FLOAT2, INPUT_PULLUP); 
  
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -147,6 +150,22 @@ void setup(void) {
 
   server.on("/api/routine/fill2", HTTP_POST, [](AsyncWebServerRequest *request) {
     currentRoutine = "FILL2";
+    getStatus(request);
+  });
+
+  server.on("/api/routine/transfer1to2", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "TRANSFER1TO2";
+    getStatus(request);
+  });
+
+  server.on("/api/routine/transfer2to1", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "TRANSFER2TO1";
+    getStatus(request);
+  });
+
+  server.on("/api/routine/stop", HTTP_POST, [](AsyncWebServerRequest *request) {
+    currentRoutine = "idle";
+    everythingOff();
     getStatus(request);
   });
 
@@ -275,7 +294,9 @@ void readCO2() {
 
 void loop(void) {
   if (currentRoutine == "FILL1") {
-    if (digitalRead(DEVICE_FLOAT1) == HIGH){
+    if (digitalRead(SENSOR_FLOAT1) == HIGH){
+      // Continue filling a bit past the sensor level
+       delay(500);
        currentRoutine = "idle";
        everythingOff();
        display("Filled!");
@@ -288,7 +309,9 @@ void loop(void) {
   }
 
   if (currentRoutine == "FILL2") {
-    if (digitalRead(DEVICE_FLOAT2) == HIGH){
+    if (digitalRead(SENSOR_FLOAT2) == HIGH){
+       // Continue filling a bit past the sensor level
+       delay(500);
        currentRoutine = "idle";
        everythingOff();
        display("Filled!");
@@ -297,6 +320,38 @@ void loop(void) {
       digitalWrite(DEVICE_PUMP2, HIGH);
     } else {
       digitalWrite(DEVICE_VALVE1, HIGH);
+    }
+  }
+
+    if (currentRoutine == "TRANSFER1TO2") {
+      // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
+      if (digitalRead(SENSOR_FLOAT2) == HIGH){
+       currentRoutine = "idle";
+       everythingOff();
+       display("Transferred!");
+    } else if (digitalRead(DEVICE_VALVE1) == HIGH && digitalRead(DEVICE_VALVE4) == HIGH) {
+      // Ensure VALVE1 and VALVE4 are open before running pump
+      digitalWrite(DEVICE_PUMP2, HIGH);
+    } else {
+      digitalWrite(DEVICE_VALVE1, HIGH);
+      delay(100);
+      digitalWrite(DEVICE_VALVE4, HIGH);
+    }
+  }
+
+  if (currentRoutine == "TRANSFER2TO1") {
+      // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
+      if (digitalRead(SENSOR_FLOAT1) == HIGH){
+       currentRoutine = "idle";
+       everythingOff();
+       display("Transferred!");
+    } else if (digitalRead(DEVICE_VALVE2) == HIGH && digitalRead(DEVICE_VALVE3) == HIGH) {
+      // Ensure VALVE2 and VALVE3 are open before running pump
+      digitalWrite(DEVICE_PUMP1, HIGH);
+    } else {
+      digitalWrite(DEVICE_VALVE2, HIGH);
+      delay(100);
+      digitalWrite(DEVICE_VALVE3, HIGH);
     }
   }
 
@@ -316,8 +371,10 @@ void loop(void) {
   status += String(digitalRead(DEVICE_VALVE4)) + ",";
   status += String(digitalRead(DEVICE_RELEASE1)) + ",";
   status += String(digitalRead(DEVICE_RELEASE2)) + ",";
-  status += String(digitalRead(DEVICE_FLOAT1)) + ",";
-  status += String(digitalRead(DEVICE_FLOAT2));
+  status += String(digitalRead(SENSOR_FLOAT1)) + ",";
+  status += String(digitalRead(SENSOR_FLOAT2)) + ",";
+  status += String(analogRead(SENSOR_PH1)) + ",";
+  status += String(analogRead(SENSOR_PH2));
   status += "]";
 
   currentStatus = status;
