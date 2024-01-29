@@ -7,7 +7,9 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncElegantOTA.h>
 #include "heltec.h"
-#include "scd30_modbus.h"
+#include <Wire.h>
+#include "SparkFun_SCD30_Arduino_Library.h" // Include the SCD30 library
+
 
 #define DEVICE_PUMP1 7
 #define DEVICE_PUMP2 6
@@ -26,10 +28,8 @@
 #define SENSOR_FLOAT2 20
 #define SENSOR_PH1 3
 #define SENSOR_PH2 4
-SCD30_Modbus scd30;
 
-static const uint8_t SDA  = 1;
-static const uint8_t SCL  = 2;
+SCD30 airSensor;
 
 // const char *ssid = "YOUR_SSID";
 // const char *password = "YOUR_PASSWORD";
@@ -58,19 +58,14 @@ void setup(void) {
   // Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
 
-  // Initialize serial
-  Serial1.begin(19200, SERIAL_8N1, 2, 1);
+  Wire.begin(2,1);
 
-  // Initialize sensor
-  scd30.begin(&Serial1, 19200);
-
-  delay(100);
-  scd30.setMeasurementInterval(10);
-
-  delay(1000);
-
-  display(String(scd30.getMeasurementInterval()));
-  delay(2000);
+  delay(200);
+  
+  if (airSensor.begin() == false) {
+    display("fukkkk");
+    delay(1000);
+  }
 
   // Initialize output pins as OUTPUT
   digitalWrite(DEVICE_PUMP1, LOW);
@@ -106,7 +101,7 @@ void setup(void) {
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    // Serial.print(".");
+    Serial.print(".");
     Heltec.display->drawString(0, 10, "Connecting...");
     Heltec.display->display();
   }
@@ -395,10 +390,8 @@ void loop(void) {
     }
   }
 
-  if (scd30.dataReady()){
-      display(String(scd30.CO2));
-  } else {
-      display("nothin");
+  if (airSensor.dataAvailable()) {
+    display(String(airSensor.getCO2()));
   }
 
   delay(20);
