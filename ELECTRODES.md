@@ -83,7 +83,7 @@ Tare your mortar and pestle on your scale, then carefully add:
 Use your mortar and pestle to mix thoroughly. You're aiming for a perfectly smooth ink with no lumps.
 
 When you've achieved this, use your disposable spoon to cast a small amount (think about 10% of what you just made) onto
-the carbon paper, like so:
+the carbon paper.
 
 While holding your casting guide steady, use your razor scraper to spread the ink as evenly as you can.
 
