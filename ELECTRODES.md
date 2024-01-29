@@ -5,7 +5,7 @@
 Carbon paper electrodes are a good starting point for many electrochemical experiments. While there are many styles,
 these ones lend themselves to DIY production.
 
-In this examples, we will be creating two types of electrodes. One made with bismuth powder, and the other with silver
+In these examples, we will be creating two types of electrodes. One made with bismuth powder, and the other with silver
 chloride powder. These happen to be the same types needed for [Synthwave](https://github.com/alexose/synthwave).
 
 Note that I'm just a hobbyist, not a professional electrochemist. It is likely that there are better techniques than
