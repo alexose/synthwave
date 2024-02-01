@@ -47,9 +47,11 @@ blade" method, which involves laying down several layers of scotch tape in lines
 razor blade to smoothly cast the ink between the lines.
 
 I use a modified doctor blade method, where I 3D print stencils rather than using up a whole roll of tape. The
-electrodes I'm aiming for are 20 cm^2 rectangles, cast a depth of 200 μm (0.2mm). The files I use are
+electrodes I'm aiming for are 20 cm² rectangles, cast a depth of 200 μm (0.2mm). The files I use are
 [included in the Synthwave repo](https://github.com/alexose/synthwave/blob/main/model/ink_spreader.stl), but are easy to
 create on your own using the CAD tool of your choice.
+
+![image|690x485, 50%](images/electrodes_1.jpg)
 
 3d printers are excellent when it comes to making accurately-sized things. Do keep in mind that the first layer of any
 3d print is mildly "squished", and may not end up _exactly_ the thickness you anticipate. Always good to verify with
@@ -70,30 +72,41 @@ This process can also be a little messy, so I like to wear latex gloves.
 
 Begin by weighing your ingredients. The [paper](https://pubs.rsc.org/en/content/articlelanding/2023/ee/d2ee03804h) that
 I'm working from only states ratios, which is not particularly useful for knowing how much to make. For your
-convenience, I've included exact weights for each ingredient, which will make enough ink to cover about 200 cm^2 of
-surface area (so, 10 electrodes).
+convenience, I've included exact weights for each ingredient, which will make enough ink to cover about 200 cm² of
+surface area (so, 8 electrodes with a little bit of excess).
 
 Tare your mortar and pestle on your scale, then carefully add:
 
 -   0.4g carbon black
 -   0.4g PVDF
 -   3.2g bismuth powder (or silver chloride, depending on which you're making)
--   4.0g NMP solvent
+-   10.0g NMP solvent
 
 Use your mortar and pestle to mix thoroughly. You're aiming for a perfectly smooth ink with no lumps.
 
-When you've achieved this, use your disposable spoon to cast a small amount (think about 10% of what you just made) onto
-the carbon paper.
+![image|375x500, 50%](images/electrodes_2.jpg) ![image|375x500, 50%](images/electrodes_3.jpg)
 
-While holding your casting guide steady, use your razor scraper to spread the ink as evenly as you can.
+When you've achieved this, set up your casting station. My approach here is to tape the 3D printed stencil to both the
+carbon paper and the workbench, then drop a spoonful of ink into each lane.
 
-Repeat until you have run out of ink.
+Now use your razor scraper to spread the ink as evenly as you can. Apply even pressure as you drag the razor scraper
+across the stencil. You'll notice that the guide is designed to give you enough room to scrape two lanes at once. You
+may then remove the stencil and admire your handywork.
+
+![image|666x500, 50%](images/electrodes_4.jpg) ![image|666x500, 50%](images/electrodes_5.jpg)
+![image|666x500, 50%](images/electrodes_6.jpg)
+
+## Cleanup
+
+The bad news is that this ink material is not water-soluable. The good news is that it tends to gel together and come
+off in long sheets. The best way I've found to clean my implements is to splash them with very cold water, dry with a
+paper towel, and repeat.
 
 ## Drying the electrodes
 
-If you're in a hurry, you can dry them in an 180F oven for 3-4 hours. Otherwise, you can leave them at room temperature
-for 24 hours.
+If you're in a hurry, you can dry them in an 180F oven for 3 hours (I personally use the back of a cookie sheet).
+Otherwise, you can leave them at room temperature for 24 hours.
 
-Once they're dry, you can cut them into their desired shapes using scissors:
+Once they're dry, carefully cut them into their desired shapes using scissors or a paper cutter.
 
 Congratulations! You have now completed your first set of electrodes.
