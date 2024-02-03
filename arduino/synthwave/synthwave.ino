@@ -8,7 +8,7 @@
 #include <AsyncElegantOTA.h>
 #include "heltec.h"
 #include <Wire.h>
-#include "SparkFun_SCD30_Arduino_Library.h" // Include the SCD30 library
+// #include "SparkFun_SCD30_Arduino_Library.h"  // Include the SCD30 library
 
 
 #define DEVICE_PUMP1 7
@@ -29,12 +29,12 @@
 #define SENSOR_PH1 3
 #define SENSOR_PH2 4
 
-SCD30 airSensor;
+// SCD30 airSensor;
 
 // const char *ssid = "YOUR_SSID";
 // const char *password = "YOUR_PASSWORD";
-const char *ssid = "Thompson Creek Yacht Club";
-const char *password = "winecountry";
+const char *ssid = "SSMC";
+const char *password = "Bismuth83";
 
 // Choose whether you want to enable data logging, and if so, where you want to send the data.
 // This must be an influxdb server, either hosted locally on your network or via Influx Cloud.
@@ -48,24 +48,25 @@ String currentStatus = "";
 AsyncWebServer server(80);
 
 void setup(void) {
+
+  // Wire1.begin(1, 2);  // SDA on GPIO1, SCL on GPIO2
+
+  delay(200);
+
+  // if (airSensor.begin(Wire1) == false) {
+  //   display("No air sensor");
+  //   delay(1000);
+  // }
+
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
   delay(100);
   Heltec.display->clear();
 
-  // Serial.begin(115200);
+  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  // Serial.println("");
+  Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
-
-  Wire.begin(2,1);
-
-  delay(200);
-  
-  if (airSensor.begin() == false) {
-    display("fukkkk");
-    delay(1000);
-  }
 
   // Initialize output pins as OUTPUT
   digitalWrite(DEVICE_PUMP1, LOW);
@@ -95,9 +96,9 @@ void setup(void) {
   pinMode(DEVICE_ELECTRODE2, OUTPUT);
 
   // Initialize input pins
-  pinMode(SENSOR_FLOAT1, INPUT); // Surprise! Pin 39 needs a hardware pullup.
-  pinMode(SENSOR_FLOAT2, INPUT_PULLUP); 
- 
+  pinMode(SENSOR_FLOAT1, INPUT);  // Surprise! Pin 39 needs a hardware pullup.
+  pinMode(SENSOR_FLOAT2, INPUT_PULLUP);
+
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -121,11 +122,11 @@ void setup(void) {
   Heltec.display->display();
 
   if (!SPIFFS.begin(true)) {
-    // Serial.println("An error has occurred while mounting SPIFFS");
+    Serial.println("An error has occurred while mounting SPIFFS");
     return;
   }
 
-  server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+  // server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
   // Status endpoint
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -266,7 +267,7 @@ void toggleDevice(const String &deviceName, AsyncWebServerRequest *request) {
   getStatus(request);
 }
 
-void display(String message){
+void display(String message) {
   Heltec.display->clear();
   Heltec.display->drawString(0, 10, message);
   Heltec.display->display();
@@ -304,7 +305,8 @@ void readCO2() {}
 // TODO: decide if this is dumb
 String buildStatusString() {
   String status = "[";
-  status += "\"" + currentRoutine + "\""",";
+  status += "\"" + currentRoutine + "\""
+                                    ",";
   status += String(millis()) + ",";
   status += String(digitalRead(DEVICE_PUMP1)) + ",";
   status += String(digitalRead(DEVICE_PUMP2)) + ",";
@@ -329,12 +331,12 @@ String buildStatusString() {
 
 void loop(void) {
   if (currentRoutine == "FILL1") {
-    if (digitalRead(SENSOR_FLOAT1) == HIGH){
+    if (digitalRead(SENSOR_FLOAT1) == HIGH) {
       // Continue filling a bit past the sensor level
-       delay(500);
-       currentRoutine = "idle";
-       everythingOff();
-       display("Filled!");
+      delay(500);
+      currentRoutine = "idle";
+      everythingOff();
+      display("Filled!");
     } else if (digitalRead(DEVICE_VALVE3) == HIGH) {
       // Ensure VALVE3 is open before running pump
       digitalWrite(DEVICE_PUMP1, HIGH);
@@ -344,12 +346,12 @@ void loop(void) {
   }
 
   if (currentRoutine == "FILL2") {
-    if (digitalRead(SENSOR_FLOAT2) == HIGH){
-       // Continue filling a bit past the sensor level
-       delay(500);
-       currentRoutine = "idle";
-       everythingOff();
-       display("Filled!");
+    if (digitalRead(SENSOR_FLOAT2) == HIGH) {
+      // Continue filling a bit past the sensor level
+      delay(500);
+      currentRoutine = "idle";
+      everythingOff();
+      display("Filled!");
     } else if (digitalRead(DEVICE_VALVE1) == HIGH) {
       // Ensure VALVE1 is open before running pump
       digitalWrite(DEVICE_PUMP2, HIGH);
@@ -358,12 +360,12 @@ void loop(void) {
     }
   }
 
-    if (currentRoutine == "TRANSFER1TO2") {
-      // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
-      if (digitalRead(SENSOR_FLOAT2) == HIGH){
-       currentRoutine = "idle";
-       everythingOff();
-       display("Transferred!");
+  if (currentRoutine == "TRANSFER1TO2") {
+    // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
+    if (digitalRead(SENSOR_FLOAT2) == HIGH) {
+      currentRoutine = "idle";
+      everythingOff();
+      display("Transferred!");
     } else if (digitalRead(DEVICE_VALVE1) == HIGH && digitalRead(DEVICE_VALVE4) == HIGH) {
       // Ensure VALVE1 and VALVE4 are open before running pump
       digitalWrite(DEVICE_PUMP2, HIGH);
@@ -375,11 +377,11 @@ void loop(void) {
   }
 
   if (currentRoutine == "TRANSFER2TO1") {
-      // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
-      if (digitalRead(SENSOR_FLOAT1) == HIGH){
-       currentRoutine = "idle";
-       everythingOff();
-       display("Transferred!");
+    // Float sensor should be active in order to begin transfer routine, but we won't enforce that for now.
+    if (digitalRead(SENSOR_FLOAT1) == HIGH) {
+      currentRoutine = "idle";
+      everythingOff();
+      display("Transferred!");
     } else if (digitalRead(DEVICE_VALVE2) == HIGH && digitalRead(DEVICE_VALVE3) == HIGH) {
       // Ensure VALVE2 and VALVE3 are open before running pump
       digitalWrite(DEVICE_PUMP1, HIGH);
@@ -390,9 +392,9 @@ void loop(void) {
     }
   }
 
-  if (airSensor.dataAvailable()) {
-    display(String(airSensor.getCO2()));
-  }
+  //if (airSensor.dataAvailable()) {
+  //  display(String(airSensor.getCO2()));
+  //}
 
   delay(20);
   currentStatus = buildStatusString();
