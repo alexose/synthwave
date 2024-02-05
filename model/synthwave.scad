@@ -13,9 +13,9 @@ rear_wall_height = 245;
 rear_wall_width = 128;
 rear_wall_thickness = 3;
 
-electrode_holder_width = 20;
-electrode_holder_height = 12;
-electrode_holder_depth = 5;
+electrode_holder_width = 14;
+electrode_holder_height = 100;
+electrode_holder_depth = 4;
 electrode_holder_radius = 1;
 
 distance_between_containers = 14;
@@ -24,9 +24,9 @@ default_screw_radius = 1;
 
 $fn = 50;
 
-render_base = 1;
+render_base = 0;
 render_base_no_lid = 0;
-render_electrode_holder = 0;
+render_electrode_holder = 1;
 render_pump_bracket = 0;
 render_container_cover = 0;
 render_back_cover = 0;
@@ -36,7 +36,7 @@ if (render_base) base();
 if (render_base_no_lid) base(false);
 if (render_electrode_holder) {
     translate([0, -20]) electrode_holder(); 
-    clip();
+    // clip();
 }
 if (render_pump_bracket) pump_bracket();
 if (render_container_cover) container_cover();
@@ -435,15 +435,15 @@ module electrode_holder() {
     
     difference() {
         hull() standoffs(h-r, w-r, d, r);
-        translate([0, d/2 + 1.75]) nickel_strip_cutout();
-        translate([0, -d/2 - 1.75]) rotate([0, 0, 180]) nickel_strip_cutout();
+        translate([0, d/2 + 1]) nickel_strip_cutout();
+        translate([0, -d/2 - 1]) rotate([0, 0, 180]) nickel_strip_cutout();
     }
 }
 
 module nickel_strip_cutout() {
-    d = 0.4;
-    h = 12;
-    w = 35;
+    d = 0.8;
+    h = electrode_holder_height;
+    w = 22;
     
     translate([0, 0, h/2 + 1]) {
         cube([w, d, h], center=true); // strip
