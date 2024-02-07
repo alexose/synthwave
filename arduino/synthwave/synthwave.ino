@@ -44,6 +44,7 @@ const char *influxdb_url = "http://192.168.1.42:8086/";
 volatile bool startFilling = false;
 String currentRoutine = "idle";
 String currentStatus = "";
+int co2 = 0;
 
 AsyncWebServer server(80);
 
@@ -58,11 +59,12 @@ void setup(void) {
   // Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
 
-  Wire.begin(2,1);
+  Wire1.begin(1,2);
 
   delay(200);
   
-  if (airSensor.begin() == false) {
+  if (airSensor.begin(Wire1) == false) {
+    display("No air sensor");
     delay(1000);
   }
 
@@ -311,8 +313,6 @@ int getDevicePin(const String &deviceName) {
   return -1;  // Invalid device name
 }
 
-void readCO2() {}
-
 // TODO: decide if this is dumb
 String buildStatusString() {
   String status = "[";
@@ -333,7 +333,8 @@ String buildStatusString() {
   status += String(digitalRead(SENSOR_FLOAT1)) + ",";
   status += String(digitalRead(SENSOR_FLOAT2)) + ",";
   status += String(analogRead(SENSOR_PH1)) + ",";
-  status += String(analogRead(SENSOR_PH2));
+  status += String(analogRead(SENSOR_PH2)) + ",";
+  status += String(co2);
   status += "]";
 
   return status;
@@ -403,10 +404,10 @@ void loop(void) {
   }
 
   if (airSensor.dataAvailable()) {
-    display(String(airSensor.getCO2()));
+    co2 = airSensor.getCO2();
   }
-
+  
   delay(20);
   currentStatus = buildStatusString();
-  delay(200);
+  delay(1000);
 }
