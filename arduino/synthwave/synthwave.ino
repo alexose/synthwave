@@ -5,7 +5,7 @@
 #include <FS.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
+#include <ElegantOTA.h>
 #include "heltec.h"
 #include <Wire.h>
 #include "SparkFun_SCD30_Arduino_Library.h" // Include the SCD30 library
@@ -63,7 +63,6 @@ void setup(void) {
   delay(200);
   
   if (airSensor.begin() == false) {
-    display("fukkkk");
     delay(1000);
   }
 
@@ -121,8 +120,21 @@ void setup(void) {
   Heltec.display->display();
 
   if (!SPIFFS.begin(true)) {
-    // Serial.println("An error has occurred while mounting SPIFFS");
+    Serial.println("An error has occurred while mounting SPIFFS");
     return;
+  } else {
+    Serial.println(" Total Bytes: " + String(SPIFFS.totalBytes()));
+    Serial.println(" Used Bytes: " + String(SPIFFS.usedBytes()));
+  }
+
+  File root = SPIFFS.open("/");
+  File file = root.openNextFile();
+  
+  
+  while(file){
+    Serial.println(file.name());
+    file = root.openNextFile();
+    delay(1000);
   }
 
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
@@ -216,7 +228,7 @@ void setup(void) {
     }
   });
 
-  AsyncElegantOTA.begin(&server);  // Start ElegantOTA
+  ElegantOTA.begin(&server);    // Start ElegantOTA
 
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Credentials", "true");
