@@ -450,8 +450,7 @@
     },
     "net_colors": null,
     "netclass_assignments": {
-      "+15V": "Thicc",
-      "GND": "Default"
+      "+15V": "Thicc"
     },
     "netclass_patterns": [
       {

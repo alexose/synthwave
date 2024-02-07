@@ -1,1 +1,2 @@
--   Swap out MINI-360 buck converter for something that can get into the 1V range
+-   Figure out programmable buck converter. Maybe not possible?
+-   Add MCU-219 INA219 eagle files
