@@ -21,9 +21,9 @@ $fn = 50;
 
 render_base = 0;
 render_base_no_lid = 0;
-render_electrode_holder = 1;
+render_electrode_holder = 0;
 render_pump_bracket = 0;
-render_container_cover = 0;
+render_container_cover = 1;
 render_back_cover = 0;
 render_standoffs = 0;
 
@@ -407,7 +407,7 @@ module band(h=10, c=1) {
 module electrode_holder() {
     w = 24;
     h = 100;
-    d = 15;
+    d = 20;
     r = 3;
     
     translate([0, w + 5]) rotate([90, 0, 90]) electrode_holder_edge();
@@ -418,12 +418,20 @@ module electrode_holder() {
         m = 8;
         t = 0.5;
         b = 10;
-        translate([0, d/2]) difference() {
-            cube([w, d, h], true);
+
+        difference() {
+            union() {
+                cube([w, d, h], true);
+                hull() {
+                    translate([0, 0, h/2 - b]) cube([w, d, 1], true);
+                    translate([0, 0, h/2 + b/2]) cube([w+15, d, 1], true);
+                }
+            }
             cube([w-m, d+2, h-m], true);
             translate([0, d/2, h/2 - b/2]) cube([w-2, t, b], true);
             translate([0, -d/2, h/2 - b/2]) cube([w-2, t, b], true);
             cube([w+2, d-m, h-m], true);
+            
         }
     }
     
@@ -451,8 +459,7 @@ module electrode_holder() {
 
 module clip() {
     d = 15;
-    scale(0.5) translate([0, 0, -d/2]) linear_extrude(d) polygon([[0,18],[0,0],[3,0],[3,12],[6,11],[6,13],[2,18]]);
-
+    scale(0.5) translate([0, 0, -d/2]) linear_extrude(d) polygon([[0,17],[0,0],[3,0],[3,12],[5,11],[5,13],[2,17]]);
 }
 
 
