@@ -159,7 +159,7 @@ module lid() {
     br = base_radius; 
     h = 1;
     r = 8;
-    d = 430;
+    d = 450;
     y = 10; // nudge forward
     
     translate([0, y]) difference() { 
@@ -175,10 +175,10 @@ module lid() {
             rotate_extrude() translate([br, 0]) lid_cutout_shape();
             
             // Anti flex bars
-            w = br * 2 - 24;
+            w = br * 2 - 50;
             h = 1.6;
-            d = 8;
-            b = 70;
+            d = 10;
+            b = 83;
             n = 0;
             
             translate([0, b - n, d/2]) cube([w,h,d], center=true);
@@ -209,8 +209,8 @@ module shelf_brackets() {
     d = 67;
 
     translate([d, -2]) rotate([0, 0, 270]) vac_shelf_bracket();
-    // mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) valve_shelf_bracket();
-    mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) vac_shelf_bracket();
+    mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) valve_shelf_bracket();
+    // mirror([1, 0, 0]) translate([d, -2]) rotate([0, 0, 270]) vac_shelf_bracket();
 }
 
 module vac_shelf_bracket() {

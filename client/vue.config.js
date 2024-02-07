@@ -18,4 +18,12 @@ module.exports = {
             new HtmlWebpackInlineSourcePlugin(HtmlWebpackPlugin),
         ],
     },
+    devServer: {
+        proxy: {
+            "/api": {
+                target: "http://192.168.1.205",
+                changeOrigin: true,
+            },
+        },
+    },
 };
