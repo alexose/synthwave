@@ -5,10 +5,10 @@
 #include <FS.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
+#include <ElegantOTA.h>
 #include "heltec.h"
 #include <Wire.h>
-// #include "SparkFun_SCD30_Arduino_Library.h"  // Include the SCD30 library
+#include "SparkFun_SCD30_Arduino_Library.h"  // Include the SCD30 library
 
 
 #define DEVICE_PUMP1 7
@@ -29,12 +29,10 @@
 #define SENSOR_PH1 3
 #define SENSOR_PH2 4
 
-// SCD30 airSensor;
+SCD30 airSensor;
 
-// const char *ssid = "YOUR_SSID";
-// const char *password = "YOUR_PASSWORD";
-const char *ssid = "SSMC";
-const char *password = "Bismuth83";
+const char *ssid = "YOUR_SSID";
+const char *password = "YOUR_PASSWORD";
 
 // Choose whether you want to enable data logging, and if so, where you want to send the data.
 // This must be an influxdb server, either hosted locally on your network or via Influx Cloud.
@@ -44,19 +42,20 @@ const char *influxdb_url = "http://192.168.1.42:8086/";
 volatile bool startFilling = false;
 String currentRoutine = "idle";
 String currentStatus = "";
+int co2 = 0;
 
 AsyncWebServer server(80);
 
 void setup(void) {
 
-  // Wire1.begin(1, 2);  // SDA on GPIO1, SCL on GPIO2
+  Wire1.begin(1, 2);  // SDA on GPIO1, SCL on GPIO2
 
   delay(200);
 
-  // if (airSensor.begin(Wire1) == false) {
-  //   display("No air sensor");
-  //   delay(1000);
-  // }
+  if (airSensor.begin(Wire1) == false) {
+     display("No air sensor");
+     delay(1000);
+  }
 
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
   delay(100);
@@ -67,6 +66,15 @@ void setup(void) {
   WiFi.begin(ssid, password);
   Serial.println("");
   Heltec.display->setFont(ArialMT_Plain_16);
+
+  Wire1.begin(1,2);
+
+  delay(200);
+  
+  if (airSensor.begin(Wire1) == false) {
+    display("No air sensor");
+    delay(1000);
+  }
 
   // Initialize output pins as OUTPUT
   digitalWrite(DEVICE_PUMP1, LOW);
@@ -124,9 +132,22 @@ void setup(void) {
   if (!SPIFFS.begin(true)) {
     Serial.println("An error has occurred while mounting SPIFFS");
     return;
+  } else {
+    Serial.println(" Total Bytes: " + String(SPIFFS.totalBytes()));
+    Serial.println(" Used Bytes: " + String(SPIFFS.usedBytes()));
   }
 
-  // server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+  File root = SPIFFS.open("/");
+  File file = root.openNextFile();
+  
+  
+  while(file){
+    Serial.println(file.name());
+    file = root.openNextFile();
+    delay(1000);
+  }
+
+  server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
 
   // Status endpoint
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -217,7 +238,7 @@ void setup(void) {
     }
   });
 
-  AsyncElegantOTA.begin(&server);  // Start ElegantOTA
+  ElegantOTA.begin(&server);    // Start ElegantOTA
 
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Credentials", "true");
@@ -300,8 +321,6 @@ int getDevicePin(const String &deviceName) {
   return -1;  // Invalid device name
 }
 
-void readCO2() {}
-
 // TODO: decide if this is dumb
 String buildStatusString() {
   String status = "[";
@@ -323,7 +342,8 @@ String buildStatusString() {
   status += String(digitalRead(SENSOR_FLOAT1)) + ",";
   status += String(digitalRead(SENSOR_FLOAT2)) + ",";
   status += String(analogRead(SENSOR_PH1)) + ",";
-  status += String(analogRead(SENSOR_PH2));
+  status += String(analogRead(SENSOR_PH2)) + ",";
+  status += String(co2);
   status += "]";
 
   return status;
@@ -392,11 +412,11 @@ void loop(void) {
     }
   }
 
-  //if (airSensor.dataAvailable()) {
-  //  display(String(airSensor.getCO2()));
-  //}
-
+  if (airSensor.dataAvailable()) {
+    co2 = airSensor.getCO2();
+  }
+  
   delay(20);
   currentStatus = buildStatusString();
-  delay(200);
+  delay(1000);
 }

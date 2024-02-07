@@ -63,6 +63,15 @@
             </div>
         </div>
     </details>
+
+    <hr class="divider" />
+
+    <details class="devices">
+        <summary>
+            <span class="title">Raw Data</span>
+        </summary>
+        <pre>{{ log }}</pre>
+    </details>
 </template>
 
 <script>
@@ -73,6 +82,7 @@
                 fetch("/api/status")
                     .then(response => response.json())
                     .then(data => {
+                        this.logData(data);
                         this.parseStatus(data);
                     })
                     .catch(error => {
@@ -80,7 +90,7 @@
                     });
             },
             startPolling() {
-                this.intervalId = setInterval(this.updateStatus, 1000);
+                this.intervalId = setInterval(this.updateStatus, 5000);
             },
             stopPolling() {
                 clearInterval(this.intervalId);
@@ -100,6 +110,9 @@
                     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
                     this.post(url);
                 }
+            },
+            logData(data) {
+                this.log = this.log + "\n" + JSON.stringify(data);
             },
             parseStatus: function (data) {
                 // The current routine is the first item in the array
@@ -148,6 +161,7 @@
             },
         },
         mounted() {
+            this.updateStatus();
             this.startPolling();
         },
         beforeUnmount() {
@@ -155,6 +169,7 @@
         },
         data() {
             return {
+                log: "",
                 intervalId: null,
                 currentRoutine: "Idle",
                 deviceStatus: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
