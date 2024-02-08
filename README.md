@@ -5,7 +5,7 @@ An open-source experiment in carbon removal based on the electrochemical pH swin
 [![DOI](https://zenodo.org/badge/686062718.svg)](https://zenodo.org/doi/10.5281/zenodo.10403598)
 
 <p float="left">
-  <img src="images/synthwave_1.jpg" width="31%" style="border: 5px solid white;" />
+  <img src="images/synthwave_0.jpg" width="31%" style="border: 5px solid white;" />
   <img src="images/synthwave_2.jpg" width="31%" style="border: 5px solid white;" />
   <img src="images/synthwave_3.jpg" width="31%" style="border: 5px solid white;" />
 </p>
