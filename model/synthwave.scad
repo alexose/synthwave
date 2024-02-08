@@ -21,9 +21,9 @@ $fn = 50;
 
 render_base = 0;
 render_base_no_lid = 0;
-render_electrode_holder = 0;
+render_electrode_holder = 1;
 render_pump_bracket = 0;
-render_container_cover = 1;
+render_container_cover = 0;
 render_back_cover = 0;
 render_standoffs = 0;
 
@@ -422,9 +422,9 @@ module electrode_holder() {
         difference() {
             union() {
                 cube([w, d, h], true);
-                hull() {
+                translate([0, 0, 10]) hull() {
                     translate([0, 0, h/2 - b]) cube([w, d, 1], true);
-                    translate([0, 0, h/2 + b/2]) cube([w+15, d, 1], true);
+                    translate([0, 0, h/2 + b/2 - 5]) cube([w+20, d, 1], true);
                 }
             }
             cube([w-m, d+2, h-m], true);
