@@ -4,7 +4,11 @@ An open-source experiment in carbon removal based on the electrochemical pH swin
 
 [![DOI](https://zenodo.org/badge/686062718.svg)](https://zenodo.org/doi/10.5281/zenodo.10403598)
 
-![Synthwave Image](images/synthwave.jpg)
+<p float="left">
+  <img src="images/synthwave_0.jpg" width="31%" style="border: 5px solid white;" />
+  <img src="images/synthwave_2.jpg" width="31%" style="border: 5px solid white;" />
+  <img src="images/synthwave_3.jpg" width="31%" style="border: 5px solid white;" />
+</p>
 
 Developed by Alex Ose with input from many wonderful collaborators via the
 [OpenAir Collective](https://openaircollective.cc/).
