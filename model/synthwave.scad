@@ -431,8 +431,9 @@ module electrode_holder() {
             translate([0, d/2, h/2 - b/2]) cube([w-2, t, b], true);
             translate([0, -d/2, h/2 - b/2]) cube([w-2, t, b], true);
             cube([w+2, d-m, h-m], true);
-            
+            translate([0, 0, h/2 - b/2 + 1]) rotate([0, 45, 0]) cube([d-m-0.8, d+1, d-m-0.8], true);
         }
+        // translate([0, 0, h/2 - b/2]) rotate([0, 45, 0]) cube([d, d, d], true);
     }
     
     module electrode_holder_edge() {
@@ -447,6 +448,7 @@ module electrode_holder() {
     
     module clips() {
         o = 5;
+        w = w + 1;
         translate([w/2, 0, h/2 - o]) rotate([0, 180]) clip();
         translate([w/2, 0, -h/2 + o]) rotate([0, 180]) clip();
         
