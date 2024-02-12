@@ -3,6 +3,7 @@
 An open-source experiment in carbon removal based on the electrochemical pH swing of seawater.
 
 [![DOI](https://zenodo.org/badge/686062718.svg)](https://zenodo.org/doi/10.5281/zenodo.10403598)
+[<img height="24px" title="OSHWA-Logo" src="./images/certification-mark-US002582.png">](https://certification.oshwa.org/us002582.html)
 
 <p float="left">
   <img src="images/synthwave_1.jpg" width="31%" style="border: 5px solid white;" />
