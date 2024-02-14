@@ -21,9 +21,9 @@ $fn = 50;
 
 render_base = 0;
 render_base_no_lid = 0;
-render_electrode_holder = 1;
+render_electrode_holder = 0;
 render_pump_bracket = 0;
-render_container_cover = 0;
+render_container_cover = 1;
 render_back_cover = 0;
 render_standoffs = 0;
 
@@ -283,51 +283,40 @@ module container_cover() {
     fh = 15; // float sensor height, adjust this if you want different water levels
     
     cover();
-    mirror([1, 0, 0]) cover();
+    // mirror([1, 0, 0]) cover();
     
     module cover() {
         difference() {
             union() {
-                holes(1.2);
                 half();
-                translate([r1 + 30, 20]) cylinder(15, r=6);
+                translate([r1 - 10, 0, 54]) scale(1.10) rotate([0, 180, 90]) electrode_holder_top();
             }
-            scale([1, 1, 2]) holes();
-            translate([r1 + 30, 20]) ScrewThread(8.6, 15, 1.1);
+            translate([r1 - 10, 0, 58]) scale([1.05, 1.05, 1.2]) rotate([0, 180, 90]) electrode_holder_top();
+            
+            // Hole for float sensor
+            translate([r1 + 30, 20]) cylinder(15, r=5);
+            
+            // Hole for pH sensor
+            translate([r1 + 30, -20]) cylinder(15, r=15);
+            
+            // Prevent anything from sticking out the bottom
+            translate([r2, 0, -20]) cylinder(20, r = r2); 
+            
         }
     }
     
-    
-    
+   
     module half() {
-        difference() {
-            translate([r1 + d/2, 0]) cylinder(h2, r1, r1-0.5);
-            translate([r1 + d/2, 0]) cylinder(h2, r1 - t, r1-0.5 - t);
-        }
+        translate([r1 + d/2, 0]) rotate_extrude() translate([54, 0]) container_cover_cutout_shape();
         translate([r1 + d/2, 0]) cylinder(h1, r=r2);
-    }
-    
-    module holes(t=0) {
-        f = 1;
-        w = 5;
-        d = 5;
-        r = 3;
-        h = 10;
-        
-        o = r1 + d/2;
-        // translate([o + 30, 20, 1]) cylinder(h, r=14.5/2 + t, $fn=6); // switch holder
-        // translate([o + 30, 20]) cylinder(h, r=8.5/2 + t, $fn=80); // switch holder
-        translate([o + 30, -20]) cylinder(h, r=13/2 + t, $fn=80); // pH probe holder
-        
-        $fn = 20;
-        translate([o, 0]) hull() standoffs(h, w + t - r, d + t - r, r);
-        translate([o, 0]) hull() standoffs(h, 9 - r + t, w + t - 11, r);
     }
 }
 
-module lid_cutout_shape() {
-//polygon([[-8,0/*1:0,0,0,0*/] ,[-7.94,1.02] ,[-7.87,2.12] ,[-7.8,3.12] ,[-7.74,4.19] ,[-7.67,5.26] ,[-7.59,6.48] ,[-7.53,7.59] ,[-7.45,8.82] ,[-7.39,9.83] ,[-7.32,10.9] ,[-7.25,12.06] ,[-7.17,13.29] ,[-7.09,14.6],[-7,16/*1:-1,-16,6,4*/] ,[-6.09,16.54] ,[-5.15,16.97] ,[-4.2,17.3] ,[-3.05,17.57] ,[-1.9,17.73] ,[-0.77,17.78] ,[0.34,17.74] ,[1.4,17.63] ,[2.41,17.47] ,[3.51,17.23] ,[4.49,16.96] ,[5.45,16.64] ,[6.43,16.26],[7,16],[8,0/*1:0,0,0,0*/] ,[6.9,0] ,[5.85,0] ,[4.74,0] ,[3.71,0] ,[2.6,0] ,[1.43,0] ,[0.24,0] ,[-0.96,0] ,[-2.14,0] ,[-3.27,0] ,[-4.34,0] ,[-5.5,0] ,[-6.63,0] ,[-7.63,0]]);
+module container_cover_cutout_shape() {
+    scale(0.3) polygon([[4,7],[13,7],[14,21],[17,21],[16,0],[1,0],[0,21],[3,21]]);
+}
 
+module lid_cutout_shape() {
     scale(0.7) polygon([[3,10],[14,10],[15,17],[17,17],[17,0],[15,0],[14,7],[3,7],[2,0],[0,0],[0,17],[2,17]]);
 
 }
@@ -403,6 +392,13 @@ module band(h=10, c=1) {
     }    
 }
 
+module electrode_holder_top(h = 100, w = 24, d = 20, b = 10) {
+    hull() {
+        translate([0, 0, h/2 - b]) cube([w, d, 1], true);
+        translate([0, 0, h/2 + b/2 - 5]) cube([w+13, d, 7], true);
+    }
+}
+
 // A snap-together assembly for holding carbon paper electrodes
 module electrode_holder() {
     w = 24;
@@ -412,7 +408,7 @@ module electrode_holder() {
     
     translate([0, w + 5]) rotate([90, 0, 90]) electrode_holder_edge();
     translate([0, 0, h/2]) rotate([0, 0, 90]) electrode_holder_middle();
-    translate([0, -w - 5]) rotate([90, 0, 90])  electrode_holder_edge();
+    translate([0, -w - 5]) rotate([90, 0, 90]) electrode_holder_edge();
     
     module electrode_holder_middle() {
         m = 8;
@@ -422,33 +418,35 @@ module electrode_holder() {
         difference() {
             union() {
                 cube([w, d, h], true);
-                translate([0, 0, 10]) hull() {
-                    translate([0, 0, h/2 - b]) cube([w, d, 1], true);
-                    translate([0, 0, h/2 + b/2 - 5]) cube([w+20, d, 1], true);
-                }
+                translate([0, 0, 10]) electrode_holder_top();
             }
             cube([w-m, d+2, h-m], true);
-            translate([0, d/2, h/2 - b/2]) cube([w-2, t, b], true);
-            translate([0, -d/2, h/2 - b/2]) cube([w-2, t, b], true);
+            translate([0, d/2, h/2 - b/2]) cube([w-2, t+0.5, b], true);
+            translate([0, -d/2, h/2 - b/2]) cube([w-2, t+0.5, b], true);
             cube([w+2, d-m, h-m], true);
             translate([0, 0, h/2 - b/2 + 1]) rotate([0, 45, 0]) cube([d-m-0.8, d+1, d-m-0.8], true);
+            translate([0, 0, h/2 - b/2 + 1]) rotate([0, 45, 90]) cube([d-m-3.5, d+15, d-m-3.5], true);
+            
+            // Holes for wire
+            translate([0, 7, h/2]) cylinder(20, r=2);
+            translate([0, -7, h/2]) cylinder(20, r=2);
         }
         // translate([0, 0, h/2 - b/2]) rotate([0, 45, 0]) cube([d, d, d], true);
     }
     
     module electrode_holder_edge() {
         m = 3;
-        d = 2.5;
+        d = 1.5;
         translate([0, d/2]) difference() {
             cube([w, d, h], true);
-            translate([0, 2]) cube([w-m, d+2, h-m], true);
+            translate([0, 2, -2]) cube([w-m, d+2, h-m+4], true);
         }
         clips();
     }
     
     module clips() {
-        o = 5;
-        w = w + 1;
+        o = 6;
+        w = w + 2;
         translate([w/2, 0, h/2 - o]) rotate([0, 180]) clip();
         translate([w/2, 0, -h/2 + o]) rotate([0, 180]) clip();
         
