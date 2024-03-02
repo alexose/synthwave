@@ -51,8 +51,8 @@ this is a good opportunity to learn!
 
 ## Main Board
 
-If you'd rather not source all of these parts yourself, please get in touch with me and I'd be happy to send you a PCB
-at cost.
+If you'd rather not source all of these parts yourself, please get in touch with me and I'd be happy to send you a
+populated PCB at cost.
 
 -   1 Custom Synthwave PCB $20
 -   1
@@ -70,6 +70,9 @@ at cost.
 -   2 [6p JST-XH right angle connectors](https://www.ebay.com/itm/333956640248?var=543005151524) $3.83 (20 pack)
 -   7 [4p JST-XH right angle connectors](https://www.amazon.com/gp/product/B0CH8G2XN9) $12.99 (Variety pack)
 -   Various [JST-XH male connectors](https://www.amazon.com/gp/product/B01MCZE2HM) $10.99 (Variety pack)
+-   1
+    [16V 1000mF capacitor](https://www.amazon.com/Twidec-Electrolytic-Assortment-0-1uF-1000uF-Capacitors/dp/B0CRYBVXVL)
+    $9.99 (Variety pack)
 
 ## Electrode Materials
 
