@@ -14,7 +14,7 @@ different 12 volt devices at once, as well as breaking out various inputs and ou
 electrochemical process.
 
 If you've never ordered a custom PCB, I highly recommend [OSHPark](https://oshpark.com/). You can order three boards for
-about $40 (having extra is never a bad idea).
+about $60 (having extra is never a bad idea).
 
 The board is designed to be populated by hand: Everything is through-hole, and nothing is surface mounted. If you're
 experienced with soldering, this should take you about an hour or so. If you're not experienced with soldering, well,
@@ -24,9 +24,9 @@ this is a good opportunity to learn!
 
 -   2 [DC 12V Water Flow Self Priming Diaphragm Micro Water Pumps](https://www.amazon.com/gp/product/B09NQZHBQ2) $25.18
     ($12.59 ea)
--   2
+-   1
     [DC 12V Mini Vacuum Pump](https://www.amazon.com/gp/product/B071GL3XXQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-    $51.98 ($25.99 ea)
+    $25.99
 
 ## Solenoids
 
@@ -46,31 +46,40 @@ this is a good opportunity to learn!
 
 -   1 [SCD30 CO2 sensor](https://www.amazon.com/extralife-Quality-Sensors-Module-Measurements/dp/B0BBGSQTYJ) $30.40
 -   2 [Gravity Arduino-compatible pH sensors](https://www.dfrobot.com/product-1782.html) $79.00 ($39.50 ea)
+-   1 [15V DC 3A Power Supply](https://www.amazon.com/Adapter-Switching-Converter-100V-240V-Positive/dp/B08CZD4HWG)
+    $12.99
+
+## Main Board
+
+If you'd rather not source all of these parts yourself, please get in touch with me and I'd be happy to send you a PCB
+at cost.
+
+-   1 Custom Synthwave PCB $20
 -   1
     [Heltec Wifi Kit 32 V3 Development Board with OLED](https://www.amazon.com/HiLetgo-Display-Bluetooth-Internet-Development/dp/B07DKD79Y9)
     $17.39
--   1 [15V DC 3A Power Supply](https://www.amazon.com/Adapter-Switching-Converter-100V-240V-Positive/dp/B08CZD4HWG)
-    $12.99
 -   1 [Adafruit 4489 L9110H H-Bridge](https://www.amazon.com/gp/product/B085KYNY3H/) $5.18
 -   1 [L7805CV Voltage Regulator](https://www.amazon.com/dp/B0C5M51R2Z) $5.99 (12 pack) 1
     [3 pin DC Power Connector, DC005 5.5x2.1mm](https://www.amazon.com/dp/B081DYQSC9) $5.99 (20 pack)
 -   10 [TIP120 NPN 5A 60V Transistors](https://www.amazon.com/gp/product/B08BFYYK7D/ref=ppx_yo_dt_b_search_asin_title)
     $8.99 (20 pack)
--   2
-    [LM2596S Adjustable Buck Converter](https://www.amazon.com/DiGiYes-Converter-Efficiency-Regulator-Adjustable/dp/B0BPSFVDY4)
-    $8.69 (5 pack)
-
-## PCB
+-   2 [LM2596 Adjustable Buck Converter](https://www.amazon.com/gp/product/B06XRN7NFQ) $7.39 (2 pack)
+-   21 [2.2kohm 1/4 watt resistors](https://www.amazon.com/dp/B08QRPRVMJ) (used as hardware pulldowns) $5.49 (100 pack)
+-   10 [30v 1A diodes](https://www.amazon.com/ALLECIN-1N5818-Schottky-Rectifier-Switching/dp/B0CKSHS9CM) (used as
+    flyback diodes) $6.49 (150 pack)
+-   2 [6p JST-XH right angle connectors](https://www.ebay.com/itm/333956640248?var=543005151524) $3.83 (20 pack)
+-   7 [4p JST-XH right angle connectors](https://www.amazon.com/gp/product/B0CH8G2XN9) $12.99 (Variety pack)
+-   Various [JST-XH male connectors](https://www.amazon.com/gp/product/B01MCZE2HM) $10.99 (Variety pack)
 
 ## Electrode Materials
 
+See [ELECTRODES.md](ELECTRODES.md) for more information.
+
 ## Misc.
 
--   20 [2.2kohm 1/4 watt resistors](https://www.amazon.com/dp/B08QRPRVMJ) (used as hardware pulldowns) $5.49 (100 pack)
--   10 [30v 1A diodes](https://www.amazon.com/ALLECIN-1N5818-Schottky-Rectifier-Switching/dp/B0CKSHS9CM) (used as
-    flyback diodes) $6.49 (150 pack)
 -   10 feet [1/4" ID 3/8" OD silicone tubing](https://www.amazon.com/dp/B07W918CBP) ~ $5
--   Solid core wire for electronics
+-   1 roll [22ga silicone ribbon cable](https://www.amazon.com/BNTECHGO-Silicone-Ribbon-Flexible-Strand/dp/B09X48VJMY)
+    $17.98
 -   Shrink tubing
 -   Wire strippers, needlenose pliers, soldering iron, etc.
 
